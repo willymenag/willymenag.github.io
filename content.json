@@ -7,6 +7,13 @@
     "links": [
         {
             "enabled": true,
+            "platform": "shop",
+            "url": "https://willy-mena-shop.fourthwall.com/en-cad",
+            "label_en": "🛍️ Shop My Merch",
+            "label_es": "🛍️ Compra Mi Merch"
+        },
+        {
+            "enabled": true,
             "platform": "youtube",
             "url": "https://www.youtube.com/@WillyMenag",
             "label_en": "Subscribe on YouTube",

@@ -162,6 +162,7 @@
         .link-btn.instagram i {
             background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .link-btn.facebook i   { color: #1877f2; }
@@ -170,6 +171,24 @@
         .link-btn.spotify i    { color: #1db954; }
         .link-btn.email i      { color: #ea4335; }
         .link-btn.website i    { color: #333; }
+        .link-btn.shop i       { color: #ff6b35; }
+        
+        /* Special highlight for the merch/shop button */
+        .link-btn.shop {
+            background: linear-gradient(135deg, #fff 0%, #fff5ef 100%);
+            border: 2px solid #ff6b35;
+            box-shadow: 0 4px 20px rgba(255,107,53,0.25);
+        }
+        
+        .link-btn.shop:hover {
+            background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+            color: #fff;
+            box-shadow: 0 12px 30px rgba(255,107,53,0.4);
+        }
+        
+        .link-btn.shop:hover i {
+            color: #fff;
+        }
         
         .footer {
             margin-top: 40px;
@@ -225,7 +244,8 @@
         discord:   'fa-brands fa-discord',
         spotify:   'fa-brands fa-spotify',
         email:     'fa-solid fa-envelope',
-        website:   'fa-solid fa-globe'
+        website:   'fa-solid fa-globe',
+        shop:      'fa-solid fa-bag-shopping'
     };
     
     const SECTION_HEADERS = {
