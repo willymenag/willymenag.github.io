@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Panel | Willy Mena Links</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0f0f13;
+            --surface: #1a1a24;
+            --surface2: #22222f;
+            --border: #2e2e3e;
+            --accent: #7c6ff7;
+            --accent-hover: #9d98f8;
+            --danger: #f75f6f;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --text: #f0f0f5;
+            --text-muted: #8888aa;
+            --radius: 12px;
+        }
+
+        html, body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── TOP NAV ── */
+        .topnav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(15,15,19,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            display: flex; align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .topnav-left {
+            display: flex; align-items: center; gap: 12px;
+        }
+
+        .topnav-logo {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+        }
+
+        .topnav-title {
+            font-size: 16px; font-weight: 700;
+            color: var(--text);
+        }
+
+        .topnav-title span {
+            color: var(--accent);
+        }
+
+        .topnav-right {
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* ── LAYOUT ── */
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 0;
+            min-height: calc(100vh - 64px);
+        }
+
+        .editor-panel {
+            padding: 32px 28px;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+        }
+
+        .preview-panel {
+            position: sticky;
+            top: 64px;
+            height: calc(100vh - 64px);
+            overflow-y: auto;
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px; border-radius: 50px;
+            font-size: 14px; font-weight: 600;
+            cursor: pointer; border: none;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(124,111,247,0.4);
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-ghost {
+            background: var(--surface2);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover {
+            color: var(--text);
+            border-color: var(--accent);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: #000;
+            font-weight: 700;
+        }
+        .btn-success:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(74,222,128,0.35);
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ── SECTIONS ── */
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: var(--accent);
+        }
+
+        /* ── FORM ELEMENTS ── */
+        .field {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="url"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            padding: 10px 14px;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(124,111,247,0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
+        }
+
+        select option {
+            background: var(--surface2);
+        }
+
+        /* ── TOGGLE ── */
+        .toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle {
+            position: relative;
+            width: 44px; height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toggle input { opacity: 0; width: 0; height: 0; }
+
+        .toggle-slider {
+            position: absolute; inset: 0;
+            background: var(--border);
+            border-radius: 24px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 18px; height: 18px;
+            left: 3px; top: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: var(--accent);
+        }
+
+        .toggle input:checked + .toggle-slider::before {
+            transform: translateX(20px);
+        }
+
+        /* ── LINK CARDS ── */
+        .link-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .link-card:hover {
+            border-color: var(--accent);
+        }
+
+        .link-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .link-card-drag {
+            color: var(--text-muted);
+            cursor: grab;
+            font-size: 16px;
+            padding: 4px;
+        }
+
+        .link-card-drag:active { cursor: grabbing; }
+
+        .platform-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .link-card-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .link-card-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .link-card-body .field-full {
+            grid-column: 1 / -1;
+        }
+
+        .link-card-body .field {
+            margin-bottom: 0;
+        }
+
+        /* Platform icon colors */
+        .pi-youtube { color: #ff0000; }
+        .pi-tiktok { color: #fff; }
+        .pi-twitch { color: #9146ff; }
+        .pi-instagram { color: #e1306c; }
+        .pi-facebook { color: #1877f2; }
+        .pi-twitter { color: #1da1f2; }
+        .pi-discord { color: #5865f2; }
+        .pi-spotify { color: #1db954; }
+        .pi-email { color: #ea4335; }
+        .pi-website { color: #aaa; }
+
+        /* ── ADD LINK BUTTON ── */
+        .add-link-btn {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .add-link-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(124,111,247,0.05);
+        }
+
+        /* ── AVATAR SECTION ── */
+        .avatar-editor {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .avatar-preview {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent);
+            flex-shrink: 0;
+        }
+
+        .avatar-inputs {
+            flex: 1;
+        }
+
+        /* ── STATUS BAR ── */
+        .status-bar {
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-bar.show { display: flex; }
+        .status-bar.info { background: rgba(124,111,247,0.15); color: var(--accent); border: 1px solid rgba(124,111,247,0.3); }
+        .status-bar.success { background: rgba(74,222,128,0.15); color: var(--success); border: 1px solid rgba(74,222,128,0.3); }
+        .status-bar.error { background: rgba(247,95,111,0.15); color: var(--danger); border: 1px solid rgba(247,95,111,0.3); }
+
+        /* ── TOKEN SECTION ── */
+        .token-section {
+            background: rgba(124,111,247,0.08);
+            border: 1px solid rgba(124,111,247,0.25);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .token-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .token-row .field {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .token-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 8px;
+        }
+
+        .token-status.saved {
+            background: rgba(74,222,128,0.15);
+            color: var(--success);
+        }
+
+        .token-status.missing {
+            background: rgba(247,95,111,0.15);
+            color: var(--danger);
+        }
+
+        /* ── PREVIEW PANEL ── */
+        .preview-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .preview-header-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .preview-lang-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+        .preview-lang-btn {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            background: var(--bg);
+            color: var(--text-muted);
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .preview-lang-btn.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .preview-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px 20px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .preview-container {
+            max-width: 360px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .preview-avatar-wrap {
+            width: 90px; height: 90px;
+            margin: 10px auto 16px;
+            position: relative;
+        }
+
+        .preview-avatar-wrap::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            z-index: 1;
+        }
+
+        .preview-avatar {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            position: relative; z-index: 2;
+            border: 3px solid #fff;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+        }
+
+        .preview-name {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 15px rgba(0,0,0,0.2);
+        }
+
+        .preview-bio {
+            color: rgba(255,255,255,0.95);
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.6;
+            margin: 0 auto 20px;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.15);
+        }
+
+        .preview-social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .preview-social-icon {
+            width: 36px; height: 36px;
+            display: flex; align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 15px;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .preview-section-header {
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            margin: 0 0 14px;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.15);
+        }
+
+        .preview-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .preview-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 20px;
+            background: #fff;
+            color: #1a1a2e;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .preview-link-btn i { font-size: 17px; }
+        .preview-link-btn.youtube i { color: #ff0000; }
+        .preview-link-btn.tiktok i { color: #000; }
+        .preview-link-btn.twitch i { color: #9146ff; }
+        .preview-link-btn.instagram i {
+            background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .preview-link-btn.facebook i { color: #1877f2; }
+        .preview-link-btn.twitter i { color: #1da1f2; }
+        .preview-link-btn.discord i { color: #5865f2; }
+        .preview-link-btn.spotify i { color: #1db954; }
+        .preview-link-btn.email i { color: #ea4335; }
+
+        .preview-footer {
+            margin-top: 30px;
+            color: rgba(255,255,255,0.85);
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* ── PUBLISH FOOTER ── */
+        .publish-footer {
+            border-top: 1px solid var(--border);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .unsaved-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--warning);
+            display: none;
+            flex-shrink: 0;
+        }
+
+        .unsaved-dot.show { display: block; }
+
+        .publish-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            max-width: 440px;
+            width: 100%;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .modal-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* ── SPINNER ── */
+        .spinner {
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+
+        .spinner.show { display: block; }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ── DRAG STYLES ── */
+        .link-card.dragging {
+            opacity: 0.4;
+            border: 2px dashed var(--accent);
+        }
+
+        .link-card.drag-over {
+            border-color: var(--accent);
+            background: rgba(124,111,247,0.08);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            .preview-panel {
+                position: static;
+                height: auto;
+                min-height: 600px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .topnav { padding: 0 16px; }
+            .editor-panel { padding: 20px 16px; }
+            .link-card-body { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+    <div class="topnav-left">
+        <img src="images/avatar.png" alt="avatar" class="topnav-logo" id="nav-avatar">
+        <span class="topnav-title">My<span>Links</span> Admin</span>
+    </div>
+    <div class="topnav-right">
+        <a href="index.html" target="_blank" class="btn btn-ghost btn-sm">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> View Site
+        </a>
+    </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+    <!-- ══ EDITOR PANEL ══ -->
+    <div class="editor-panel">
+
+        <!-- STATUS -->
+        <div class="status-bar" id="status-bar">
+            <i class="fa-solid fa-circle-info"></i>
+            <span id="status-text"></span>
+        </div>
+
+        <!-- GITHUB TOKEN -->
+        <div class="token-section">
+            <div class="section-title" style="margin-bottom:12px;">
+                <i class="fa-brands fa-github"></i> GitHub Access
+            </div>
+            <div class="token-row">
+                <div class="field">
+                    <label>Personal Access Token</label>
+                    <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                </div>
+                <button class="btn btn-ghost btn-sm" onclick="saveToken()" style="white-space:nowrap; margin-bottom:0; height:40px;">
+                    <i class="fa-solid fa-floppy-disk"></i> Save
+                </button>
+            </div>
+            <div id="token-status-badge"></div>
+        </div>
+
+        <!-- PROFILE -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fa-solid fa-user"></i> Profile
+            </div>
+
+            <!-- AVATAR -->
+            <div class="field">
+                <label>Profile Picture</label>
+                <div class="avatar-editor">
+                    <img src="images/avatar.png" alt="avatar" class="avatar-preview" id="avatar-preview">
+                    <div class="avatar-inputs">
+                        <div class="field" style="margin-bottom:8px;">
+                            <label>Image URL</label>
+                            <input type="url" id="avatar-url" placeholder="https://... or leave blank to upload">
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <label class="btn btn-ghost btn-sm" style="cursor:pointer; margin:0;">
+                                <i class="fa-solid fa-upload"></i> Upload
+                                <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+                            </label>
+                            <button class="btn btn-ghost btn-sm" onclick="applyAvatarUrl()">
+                                <i class="fa-solid fa-check"></i> Apply URL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Display Name</label>
+                <input type="text" id="profile-name" placeholder="Your Name" oninput="livePreview()">
+            </div>
+
+            <div class="field">
+                <label>Bio — English</label>
+                <textarea id="bio-en" placeholder="Bio in English (you can use <br> for new lines)" oninput="livePreview()"></textarea>
+                <small style="color:var(--text-muted); font-size:11px; margin-top:4px; display:block;">
+                    Use &lt;br&gt; to add a new line. Example: Line one&lt;br&gt;Line two
+                </small>
+            </div>
+
+            <div class="field">
+                <label>Bio — Español</label>
+                <textarea id="bio-es" placeholder="Bio en Español" oninput="livePreview()"></textarea>
+            </div>
+        </div>
+
+        <!-- LINKS -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fa-solid fa-link"></i> Links
+                <span style="margin-left:auto; font-size:11px; color:var(--text-muted); text-transform:none; letter-spacing:0;">
+                    Drag to reorder
+                </span>
+            </div>
+
+            <div id="links-container"></div>
+
+            <button class="add-link-btn" onclick="addLink()">
+                <i class="fa-solid fa-plus"></i> Add New Link
+            </button>
+        </div>
+
+        <!-- DANGER ZONE -->
+        <div class="section" style="border-color: rgba(247,95,111,0.3);">
+            <div class="section-title" style="color: var(--danger);">
+                <i class="fa-solid fa-triangle-exclamation"></i> Reset
+            </div>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
+                Reload the current content from GitHub, discarding all unsaved changes.
+            </p>
+            <button class="btn btn-danger btn-sm" onclick="confirmReset()">
+                <i class="fa-solid fa-rotate-left"></i> Discard Changes & Reload
+            </button>
+        </div>
+
+    </div>
+    <!-- end editor-panel -->
+
+    <!-- ══ PREVIEW PANEL ══ -->
+    <div class="preview-panel">
+        <div class="preview-header">
+            <span class="preview-header-title"><i class="fa-solid fa-eye"></i> Live Preview</span>
+            <div class="preview-lang-btns">
+                <button class="preview-lang-btn active" onclick="setPreviewLang('en')" id="prev-btn-en">EN</button>
+                <button class="preview-lang-btn" onclick="setPreviewLang('es')" id="prev-btn-es">ES</button>
+            </div>
+        </div>
+
+        <div class="preview-body" id="preview-body">
+            <div class="preview-container" id="preview-container">
+                <!-- rendered by JS -->
+            </div>
+        </div>
+
+        <div class="publish-footer">
+            <div class="publish-info">
+                <div class="unsaved-dot" id="unsaved-dot"></div>
+                <span id="publish-status-text">Loading...</span>
+            </div>
+            <button class="btn btn-success" id="publish-btn" onclick="openPublishModal()" disabled>
+                <div class="spinner" id="publish-spinner"></div>
+                <i class="fa-solid fa-rocket" id="publish-icon"></i>
+                Publish
+            </button>
+        </div>
+    </div>
+
+</div>
+<!-- end layout -->
+
+<!-- PUBLISH MODAL -->
+<div class="modal-overlay" id="publish-modal">
+    <div class="modal">
+        <div class="modal-title">🚀 Publish Changes</div>
+        <div class="modal-desc">
+            This will update <strong>content.json</strong> on GitHub and your live site will refresh in about 30 seconds.
+            <br><br>
+            Make sure everything looks good in the preview before publishing!
+        </div>
+        <div class="field">
+            <label>Commit Message (optional)</label>
+            <input type="text" id="commit-message" placeholder="Update links and profile" value="Update content via admin panel">
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="closePublishModal()">Cancel</button>
+            <button class="btn btn-success" onclick="publishToGitHub()">
+                <i class="fa-solid fa-rocket"></i> Publish Now
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- RESET MODAL -->
+<div class="modal-overlay" id="reset-modal">
+    <div class="modal">
+        <div class="modal-title">⚠️ Discard Changes?</div>
+        <div class="modal-desc">
+            All unsaved changes will be lost and the editor will reload the current live content from GitHub.
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="closeResetModal()">Cancel</button>
+            <button class="btn btn-danger" onclick="resetAndReload()">
+                <i class="fa-solid fa-rotate-left"></i> Yes, Discard & Reload
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════════
+const REPO_OWNER = 'willymenag';
+const REPO_NAME  = 'willymenag.github.io';
+const CONTENT_PATH = 'content.json';
+const GITHUB_API = 'https://api.github.com';
+
+const PLATFORM_ICONS = {
+    youtube:   'fa-brands fa-youtube',
+    tiktok:    'fa-brands fa-tiktok',
+    twitch:    'fa-brands fa-twitch',
+    instagram: 'fa-brands fa-instagram',
+    facebook:  'fa-brands fa-facebook',
+    twitter:   'fa-brands fa-x-twitter',
+    discord:   'fa-brands fa-discord',
+    spotify:   'fa-brands fa-spotify',
+    email:     'fa-solid fa-envelope',
+    website:   'fa-solid fa-globe'
+};
+
+const PLATFORMS = Object.keys(PLATFORM_ICONS);
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let currentData = null;     // loaded from GitHub
+let fileSHA     = null;     // needed for GitHub update API
+let previewLang = 'en';
+let hasChanges  = false;
+let avatarBase64 = null;    // if user uploads a file
+
+// ═══════════════════════════════════════════════════
+//  TOKEN MANAGEMENT
+// ═══════════════════════════════════════════════════
+function getToken() {
+    return localStorage.getItem('gh_token') || '';
+}
+
+function saveToken() {
+    const val = document.getElementById('github-token').value.trim();
+    if (!val) { showStatus('Please enter a token first.', 'error'); return; }
+    localStorage.setItem('gh_token', val);
+    renderTokenStatus();
+    showStatus('Token saved! Loading your content...', 'success');
+    loadFromGitHub();
+}
+
+function renderTokenStatus() {
+    const t = getToken();
+    const badge = document.getElementById('token-status-badge');
+    if (t) {
+        document.getElementById('github-token').value = t;
+        badge.innerHTML = `<span class="token-status saved"><i class="fa-solid fa-circle-check"></i> Token saved in browser</span>`;
+    } else {
+        badge.innerHTML = `<span class="token-status missing"><i class="fa-solid fa-circle-xmark"></i> No token saved — enter one above</span>`;
+    }
+}
+
+// ═══════════════════════════════════════════════════
+//  GITHUB API
+// ═══════════════════════════════════════════════════
+async function loadFromGitHub() {
+    const token = getToken();
+    if (!token) {
+        showStatus('Enter your GitHub token and click Save to get started.', 'info');
+        setPublishStatus('No token — enter one on the left', false);
+        return;
+    }
+
+    showStatus('Loading content from GitHub...', 'info');
+    setPublishStatus('Loading...', false);
+
+    try {
+        const res = await fetch(
+            `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}`,
+            { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' } }
+        );
+
+        if (res.status === 401) {
+            showStatus('❌ Token is invalid or expired. Please update it.', 'error');
+            setPublishStatus('Invalid token', false);
+            return;
+        }
+
+        if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+
+        const json = await res.json();
+        fileSHA = json.sha;
+        const decoded = atob(json.content.replace(/\n/g, ''));
+        currentData = JSON.parse(decoded);
+
+        populateEditor(currentData);
+        hasChanges = false;
+        updateUnsavedDot();
+        showStatus('✅ Content loaded successfully!', 'success');
+        setPublishStatus('All changes published', false);
+        document.getElementById('publish-btn').disabled = false;
+        livePreview();
+
+    } catch(e) {
+        console.error(e);
+        showStatus('❌ Failed to load content: ' + e.message, 'error');
+        setPublishStatus('Load failed', false);
+    }
+}
+
+async function publishToGitHub() {
+    const token = getToken();
+    if (!token) { showStatus('No GitHub token found.', 'error'); return; }
+
+    const commitMsg = document.getElementById('commit-message').value.trim() || 'Update content via admin panel';
+
+    // Build data from editor
+    const data = buildDataFromEditor();
+    const contentStr = JSON.stringify(data, null, 4);
+    const encoded = btoa(unescape(encodeURIComponent(contentStr)));
+
+    closePublishModal();
+    setPublishing(true);
+    showStatus('Publishing to GitHub...', 'info');
+
+    try {
+        const body = {
+            message: commitMsg,
+            content: encoded,
+            sha: fileSHA
+        };
+
+        const res = await fetch(
+            `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}`,
+            {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    Accept: 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            }
+        );
+
+        if (res.status === 401) {
+            showStatus('❌ Token invalid or expired.', 'error');
+            setPublishing(false);
+            return;
+        }
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.message || res.status);
+        }
+
+        const result = await res.json();
+        fileSHA = result.content.sha;
+        currentData = data;
+        hasChanges = false;
+        updateUnsavedDot();
+        setPublishing(false);
+        showStatus('🚀 Published! Your site will update in ~30 seconds.', 'success');
+        setPublishStatus('Published just now ✓', false);
+
+    } catch(e) {
+        console.error(e);
+        showStatus('❌ Publish failed: ' + e.message, 'error');
+        setPublishing(false);
+    }
+}
+
+// ═══════════════════════════════════════════════════
+//  EDITOR — POPULATE
+// ═══════════════════════════════════════════════════
+function populateEditor(data) {
+    document.getElementById('profile-name').value = data.profile.name || '';
+    document.getElementById('bio-en').value = data.profile.bio_en || '';
+    document.getElementById('bio-es').value = data.profile.bio_es || '';
+
+    renderLinkCards(data.links);
+}
+
+function renderLinkCards(links) {
+    const container = document.getElementById('links-container');
+    container.innerHTML = '';
+    links.forEach((link, idx) => {
+        container.appendChild(createLinkCard(link, idx));
+    });
+    initDragAndDrop();
+}
+
+function createLinkCard(link, idx) {
+    const div = document.createElement('div');
+    div.className = 'link-card';
+    div.dataset.idx = idx;
+    div.draggable = true;
+
+    const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
+    const platformOptions = PLATFORMS.map(p =>
+        `<option value="${p}" ${p === link.platform ? 'selected' : ''}>${p.charAt(0).toUpperCase() + p.slice(1)}</option>`
+    ).join('');
+
+    div.innerHTML = `
+        <div class="link-card-header">
+            <span class="link-card-drag" title="Drag to reorder">
+                <i class="fa-solid fa-grip-vertical"></i>
+            </span>
+            <span class="platform-badge">
+                <i class="${icon} pi-${link.platform}"></i>
+                <span class="platform-label">${link.platform}</span>
+            </span>
+            <div class="link-card-actions">
+                <label class="toggle" title="${link.enabled ? 'Enabled' : 'Disabled'}">
+                    <input type="checkbox" ${link.enabled ? 'checked' : ''} onchange="onCardChange()">
+                    <span class="toggle-slider"></span>
+                </label>
+                <button class="btn btn-danger btn-sm" onclick="removeLink(this)" title="Remove link">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        <div class="link-card-body">
+            <div class="field field-full">
+                <label>Platform</label>
+                <select onchange="onPlatformChange(this); onCardChange()">
+                    ${platformOptions}
+                </select>
+            </div>
+            <div class="field field-full">
+                <label>URL</label>
+                <input type="url" value="${link.url || ''}" placeholder="https://..." oninput="onCardChange()">
+            </div>
+            <div class="field">
+                <label>Label — English</label>
+                <input type="text" value="${link.label_en || ''}" placeholder="Follow on..." oninput="onCardChange()">
+            </div>
+            <div class="field">
+                <label>Label — Español</label>
+                <input type="text" value="${link.label_es || ''}" placeholder="Sígueme en..." oninput="onCardChange()">
+            </div>
+        </div>
+    `;
+
+    return div;
+}
+
+// ═══════════════════════════════════════════════════
+//  EDITOR — EVENTS
+// ═══════════════════════════════════════════════════
+function onCardChange() {
+    markChanged();
+    livePreview();
+}
+
+function onPlatformChange(select) {
+    const card = select.closest('.link-card');
+    const platform = select.value;
+    const icon = PLATFORM_ICONS[platform] || 'fa-solid fa-link';
+    const badge = card.querySelector('.platform-badge');
+    badge.innerHTML = `<i class="${icon} pi-${platform}"></i><span class="platform-label">${platform}</span>`;
+}
+
+function addLink() {
+    const container = document.getElementById('links-container');
+    const newLink = {
+        enabled: true,
+        platform: 'website',
+        url: '',
+        label_en: '',
+        label_es: ''
+    };
+    const idx = container.children.length;
+    container.appendChild(createLinkCard(newLink, idx));
+    initDragAndDrop();
+    markChanged();
+    livePreview();
+    // scroll to new card
+    container.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function removeLink(btn) {
+    const card = btn.closest('.link-card');
+    card.style.transition = 'opacity 0.2s';
+    card.style.opacity = '0';
+    setTimeout(() => {
+        card.remove();
+        markChanged();
+        livePreview();
+    }, 200);
+}
+
+// ═══════════════════════════════════════════════════
+//  BUILD DATA FROM EDITOR
+// ═══════════════════════════════════════════════════
+function buildDataFromEditor() {
+    const cards = document.querySelectorAll('.link-card');
+    const links = [];
+
+    cards.forEach(card => {
+        const inputs  = card.querySelectorAll('input[type="text"], input[type="url"]');
+        const selects = card.querySelectorAll('select');
+        const toggle  = card.querySelector('input[type="checkbox"]');
+
+        // inputs order: url, label_en, label_es
+        // select: platform
+        links.push({
+            enabled:   toggle ? toggle.checked : true,
+            platform:  selects[0] ? selects[0].value : 'website',
+            url:       inputs[0] ? inputs[0].value.trim() : '',
+            label_en:  inputs[1] ? inputs[1].value.trim() : '',
+            label_es:  inputs[2] ? inputs[2].value.trim() : ''
+        });
+    });
+
+    return {
+        profile: {
+            name:   document.getElementById('profile-name').value.trim(),
+            bio_en: document.getElementById('bio-en').value.trim(),
+            bio_es: document.getElementById('bio-es').value.trim()
+        },
+        links
+    };
+}
+
+// ═══════════════════════════════════════════════════
+//  AVATAR
+// ═══════════════════════════════════════════════════
+function handleAvatarUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        avatarBase64 = e.target.result;
+        document.getElementById('avatar-preview').src = avatarBase64;
+        document.getElementById('nav-avatar').src = avatarBase64;
+        document.getElementById('avatar-url').value = '';
+        livePreview();
+        showStatus('⚠️ Avatar upload preview only. To permanently change the avatar, you need to manually upload the image file to your GitHub repo at images/avatar.png', 'info');
+    };
+    reader.readAsDataURL(file);
+}
+
+function applyAvatarUrl() {
+    const url = document.getElementById('avatar-url').value.trim();
+    if (!url) return;
+    document.getElementById('avatar-preview').src = url;
+    document.getElementById('nav-avatar').src = url;
+    avatarBase64 = null;
+    livePreview();
+}
+
+function getPreviewAvatarSrc() {
+    if (avatarBase64) return avatarBase64;
+    const url = document.getElementById('avatar-url').value.trim();
+    if (url) return url;
+    return 'images/avatar.png';
+}
+
+// ═══════════════════════════════════════════════════
+//  LIVE PREVIEW
+// ═══════════════════════════════════════════════════
+function setPreviewLang(lang) {
+    previewLang = lang;
+    document.querySelectorAll('.preview-lang-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('prev-btn-' + lang).classList.add('active');
+    livePreview();
+}
+
+function livePreview() {
+    const data = buildDataFromEditor();
+    const lang = previewLang;
+    const bioKey = 'bio_' + lang;
+    const labelKey = 'label_' + lang;
+
+    const activeLinksSocial = data.links.filter(l => l.enabled && l.url).map(link => {
+        const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
+        return `<a class="preview-social-icon" title="${link.platform}">
+                    <i class="${icon}"></i>
+                </a>`;
+    }).join('');
+
+    const activeLinksMain = data.links.filter(l => l.enabled && l.url).map(link => {
+        const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
+        const label = link[labelKey] || link.label_en || link.platform;
+        return `<div class="preview-link-btn ${link.platform}">
+                    <i class="${icon}"></i>
+                    <span>${label}</span>
+                </div>`;
+    }).join('');
+
+    const year = new Date().getFullYear();
+    const avatarSrc = getPreviewAvatarSrc();
+
+    document.getElementById('preview-container').innerHTML = `
+        <div class="preview-avatar-wrap">
+            <img class="preview-avatar" src="${avatarSrc}" alt="avatar" onerror="this.src='images/avatar.png'">
+        </div>
+        <div class="preview-name">${data.profile.name || 'Your Name'}</div>
+        <div class="preview-bio">${data.profile[bioKey] || ''}</div>
+        <div class="preview-social-icons">${activeLinksSocial}</div>
+        <div class="preview-section-header">${lang === 'es' ? '🔗 TODOS MIS ENLACES' : '🔗 ALL MY LINKS'}</div>
+        <div class="preview-links">${activeLinksMain}</div>
+        <div class="preview-footer">© ${year} ${data.profile.name || ''}</div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════
+//  DRAG AND DROP (REORDER)
+// ═══════════════════════════════════════════════════
+let dragSrc = null;
+
+function initDragAndDrop() {
+    document.querySelectorAll('.link-card').forEach(card => {
+        card.addEventListener('dragstart', e => {
+            dragSrc = card;
+            card.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+        card.addEventListener('dragend', () => {
+            card.classList.remove('dragging');
+            document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+            markChanged();
+            livePreview();
+        });
+        card.addEventListener('dragover', e => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            if (card !== dragSrc) {
+                document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+                card.classList.add('drag-over');
+            }
+        });
+        card.addEventListener('drop', e => {
+            e.preventDefault();
+            if (dragSrc && dragSrc !== card) {
+                const container = document.getElementById('links-container');
+                const cards = [...container.querySelectorAll('.link-card')];
+                const srcIdx = cards.indexOf(dragSrc);
+                const tgtIdx = cards.indexOf(card);
+                if (srcIdx < tgtIdx) {
+                    container.insertBefore(dragSrc, card.nextSibling);
+                } else {
+                    container.insertBefore(dragSrc, card);
+                }
+            }
+        });
+    });
+}
+
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+function markChanged() {
+    hasChanges = true;
+    updateUnsavedDot();
+    setPublishStatus('You have unsaved changes', true);
+}
+
+function updateUnsavedDot() {
+    const dot = document.getElementById('unsaved-dot');
+    dot.classList.toggle('show', hasChanges);
+}
+
+function setPublishStatus(text, warning) {
+    const el = document.getElementById('publish-status-text');
+    el.textContent = text;
+    el.style.color = warning ? 'var(--warning)' : 'var(--text-muted)';
+}
+
+function showStatus(msg, type) {
+    const bar = document.getElementById('status-bar');
+    const text = document.getElementById('status-text');
+    text.textContent = msg;
+    bar.className = 'status-bar show ' + type;
+    if (type === 'success') {
+        setTimeout(() => bar.classList.remove('show'), 5000);
+    }
+}
+
+function setPublishing(state) {
+    const btn = document.getElementById('publish-btn');
+    const spinner = document.getElementById('publish-spinner');
+    const icon = document.getElementById('publish-icon');
+    btn.disabled = state;
+    spinner.classList.toggle('show', state);
+    icon.style.display = state ? 'none' : '';
+}
+
+// ═══════════════════════════════════════════════════
+//  MODALS
+// ═══════════════════════════════════════════════════
+function openPublishModal() {
+    const token = getToken();
+    if (!token) {
+        showStatus('Please save your GitHub token first.', 'error');
+        return;
+    }
+    document.getElementById('publish-modal').classList.add('show');
+}
+
+function closePublishModal() {
+    document.getElementById('publish-modal').classList.remove('show');
+}
+
+function confirmReset() {
+    document.getElementById('reset-modal').classList.add('show');
+}
+
+function closeResetModal() {
+    document.getElementById('reset-modal').classList.remove('show');
+}
+
+function resetAndReload() {
+    closeResetModal();
+    avatarBase64 = null;
+    document.getElementById('avatar-url').value = '';
+    document.getElementById('avatar-preview').src = 'images/avatar.png';
+    document.getElementById('nav-avatar').src = 'images/avatar.png';
+    loadFromGitHub();
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.classList.remove('show');
+    });
+});
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+renderTokenStatus();
+loadFromGitHub();
+</script>
+</body>
+</html>
