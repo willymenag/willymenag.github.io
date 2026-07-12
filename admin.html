@@ -609,6 +609,7 @@
         .preview-link-btn.instagram i {
             background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .preview-link-btn.facebook i { color: #1877f2; }
@@ -964,11 +965,24 @@ const PLATFORMS = Object.keys(PLATFORM_ICONS);
 // ═══════════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════════
-let currentData = null;     // loaded from GitHub
-let fileSHA     = null;     // needed for GitHub update API
+let currentData = null;
+let fileSHA     = null;
 let previewLang = 'en';
 let hasChanges  = false;
-let avatarBase64 = null;    // if user uploads a file
+let avatarBase64 = null;
+
+// ═══════════════════════════════════════════════════
+//  UTF-8 SAFE BASE64 HELPERS
+// ═══════════════════════════════════════════════════
+function b64EncodeUnicode(str) {
+    // Convert a UTF-8 string (with emojis/accents) to base64
+    return btoa(unescape(encodeURIComponent(str)));
+}
+
+function b64DecodeUnicode(str) {
+    // Convert base64 back to a UTF-8 string (with emojis/accents preserved)
+    return decodeURIComponent(escape(atob(str)));
+}
 
 // ═══════════════════════════════════════════════════
 //  TOKEN MANAGEMENT
@@ -1027,7 +1041,9 @@ async function loadFromGitHub() {
 
         const json = await res.json();
         fileSHA = json.sha;
-        const decoded = atob(json.content.replace(/\n/g, ''));
+
+        // ✅ UTF-8 SAFE DECODE — preserves emojis and accents
+        const decoded = b64DecodeUnicode(json.content.replace(/\n/g, ''));
         currentData = JSON.parse(decoded);
 
         populateEditor(currentData);
@@ -1051,10 +1067,11 @@ async function publishToGitHub() {
 
     const commitMsg = document.getElementById('commit-message').value.trim() || 'Update content via admin panel';
 
-    // Build data from editor
     const data = buildDataFromEditor();
     const contentStr = JSON.stringify(data, null, 4);
-    const encoded = btoa(unescape(encodeURIComponent(contentStr)));
+
+    // ✅ UTF-8 SAFE ENCODE — preserves emojis and accents
+    const encoded = b64EncodeUnicode(contentStr);
 
     closePublishModal();
     setPublishing(true);
@@ -1170,16 +1187,25 @@ function createLinkCard(link, idx) {
             </div>
             <div class="field">
                 <label>Label — English</label>
-                <input type="text" value="${link.label_en || ''}" placeholder="Follow on..." oninput="onCardChange()">
+                <input type="text" value="${escapeHtml(link.label_en || '')}" placeholder="Follow on..." oninput="onCardChange()">
             </div>
             <div class="field">
                 <label>Label — Español</label>
-                <input type="text" value="${link.label_es || ''}" placeholder="Sígueme en..." oninput="onCardChange()">
+                <input type="text" value="${escapeHtml(link.label_es || '')}" placeholder="Sígueme en..." oninput="onCardChange()">
             </div>
         </div>
     `;
 
     return div;
+}
+
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1212,7 +1238,6 @@ function addLink() {
     initDragAndDrop();
     markChanged();
     livePreview();
-    // scroll to new card
     container.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
@@ -1239,8 +1264,6 @@ function buildDataFromEditor() {
         const selects = card.querySelectorAll('select');
         const toggle  = card.querySelector('input[type="checkbox"]');
 
-        // inputs order: url, label_en, label_es
-        // select: platform
         links.push({
             enabled:   toggle ? toggle.checked : true,
             platform:  selects[0] ? selects[0].value : 'website',
@@ -1274,7 +1297,7 @@ function handleAvatarUpload(input) {
         document.getElementById('nav-avatar').src = avatarBase64;
         document.getElementById('avatar-url').value = '';
         livePreview();
-        showStatus('⚠️ Avatar upload preview only. To permanently change the avatar, you need to manually upload the image file to your GitHub repo at images/avatar.png', 'info');
+        showStatus('⚠️ Avatar upload preview only. To permanently change the avatar, upload the image file to your GitHub repo at images/avatar.png', 'info');
     };
     reader.readAsDataURL(file);
 }
@@ -1458,7 +1481,6 @@ function resetAndReload() {
     loadFromGitHub();
 }
 
-// Close modals on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => {
         if (e.target === overlay) overlay.classList.remove('show');
