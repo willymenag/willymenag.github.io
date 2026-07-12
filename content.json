@@ -1,0 +1,44 @@
+{
+    "profile": {
+        "name": "Willy Mena",
+        "bio_en": "🎙️ Content Creator & Streamer<br>🎬 Vlogs | Unconventional Talks | IRL<br>☕ Passionate about good coffee<br>👇 Join me on the journey!",
+        "bio_es": "🎙️ Creador de contenido & Streamer<br>🎬 Vlogs | Charlas Unconventional | IRL<br>☕ Apasionado del buen café<br>👇 ¡Acompáñame en el viaje!"
+    },
+    "links": [
+        {
+            "enabled": true,
+            "platform": "youtube",
+            "url": "https://www.youtube.com/@WillyMenag",
+            "label_en": "Subscribe on YouTube",
+            "label_es": "Suscríbete en YouTube"
+        },
+        {
+            "enabled": true,
+            "platform": "tiktok",
+            "url": "https://www.tiktok.com/@willymenag",
+            "label_en": "Follow on TikTok",
+            "label_es": "Sígueme en TikTok"
+        },
+        {
+            "enabled": true,
+            "platform": "twitch",
+            "url": "https://www.twitch.tv/willymenag",
+            "label_en": "Watch on Twitch",
+            "label_es": "Míralo en Twitch"
+        },
+        {
+            "enabled": true,
+            "platform": "instagram",
+            "url": "https://www.instagram.com/willymenag/",
+            "label_en": "Follow on Instagram",
+            "label_es": "Sígueme en Instagram"
+        },
+        {
+            "enabled": true,
+            "platform": "facebook",
+            "url": "https://www.facebook.com/Willymenag",
+            "label_en": "Follow on Facebook",
+            "label_es": "Sígueme en Facebook"
+        }
+    ]
+}

@@ -9,41 +9,27 @@
     
     <link rel="icon" type="image/png" href="images/avatar.png">
     
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         html, body {
             min-height: 100%;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
         
         body {
-            background: linear-gradient(135deg, 
-                #667eea 0%, 
-                #764ba2 25%,
-                #f093fb 50%,
-                #4facfe 75%,
-                #00f2fe 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
             min-height: 100vh;
             padding: 40px 20px 60px;
-            position: relative;
-            overflow-x: hidden;
         }
         
         @keyframes gradientShift {
@@ -52,482 +38,298 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* Language Switcher */
         .lang-switcher {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 4px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.25);
-            padding: 5px;
-            border-radius: 30px;
+            position: fixed; top: 20px; right: 20px;
+            display: flex; gap: 4px; z-index: 1000;
+            background: rgba(255,255,255,0.25);
+            padding: 5px; border-radius: 30px;
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255,255,255,0.4);
         }
         
         .lang-btn {
-            padding: 8px 16px;
-            border: none;
+            padding: 8px 16px; border: none;
             background: transparent;
-            color: rgba(255, 255, 255, 0.9);
-            border-radius: 24px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
+            color: rgba(255,255,255,0.9);
+            border-radius: 24px; font-size: 12px;
+            font-weight: 700; cursor: pointer;
             transition: all 0.3s ease;
-            font-family: inherit;
-            letter-spacing: 0.5px;
+            font-family: inherit; letter-spacing: 0.5px;
         }
         
-        .lang-btn:hover {
-            color: #fff;
-        }
-        
+        .lang-btn:hover { color: #fff; }
         .lang-btn.active {
-            background: #fff;
-            color: #333;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            background: #fff; color: #333;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
         }
         
-        /* Main Container */
         .container {
-            max-width: 480px;
-            margin: 0 auto;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-        
-        /* Profile Section */
-        .profile {
-            padding-top: 20px;
+            max-width: 480px; margin: 0 auto;
+            text-align: center; position: relative;
         }
         
         .avatar-wrap {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px;
-            position: relative;
+            width: 120px; height: 120px;
+            margin: 20px auto 20px; position: relative;
         }
         
         .avatar-wrap::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.95);
+            content: ''; position: absolute;
+            inset: -4px; border-radius: 50%;
+            background: rgba(255,255,255,0.95);
             z-index: 1;
         }
         
         .avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            position: relative;
-            z-index: 2;
+            width: 100%; height: 100%;
+            border-radius: 50%; object-fit: cover;
+            position: relative; z-index: 2;
             border: 4px solid #fff;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
         }
         
         h1 {
-            color: #fff;
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 12px;
-            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
-            letter-spacing: -0.5px;
+            color: #fff; font-size: 28px;
+            font-weight: 800; margin-bottom: 12px;
+            text-shadow: 0 2px 15px rgba(0,0,0,0.2);
         }
         
         .description {
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 1.6;
-            max-width: 380px;
+            color: rgba(255,255,255,0.95);
+            font-size: 14px; font-weight: 500;
+            line-height: 1.6; max-width: 380px;
             margin: 0 auto 24px;
-            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.15);
+            text-shadow: 0 1px 8px rgba(0,0,0,0.15);
             padding: 0 10px;
         }
         
-        /* Social Icons Row */
         .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 14px;
-            margin-bottom: 32px;
+            display: flex; justify-content: center;
+            gap: 14px; margin-bottom: 32px;
             flex-wrap: wrap;
         }
         
         .social-icon {
-            width: 42px;
-            height: 42px;
-            display: flex;
-            align-items: center;
+            width: 42px; height: 42px;
+            display: flex; align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255,255,255,0.25);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 50%;
-            color: #fff;
-            font-size: 18px;
-            text-decoration: none;
+            border-radius: 50%; color: #fff;
+            font-size: 18px; text-decoration: none;
             transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255,255,255,0.3);
         }
         
         .social-icon:hover {
-            background: #fff;
-            color: #333;
+            background: #fff; color: #333;
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
         
-        /* Section Header */
         .section-header {
-            color: #fff;
-            font-size: 14px;
-            font-weight: 700;
-            margin: 24px 0 20px;
-            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.15);
+            color: #fff; font-size: 14px;
+            font-weight: 700; margin: 24px 0 20px;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.15);
             letter-spacing: 0.5px;
         }
         
-        /* Link Buttons */
         .links {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            padding: 0 8px;
+            display: flex; flex-direction: column;
+            gap: 14px; padding: 0 8px;
         }
         
         .link-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 18px 24px;
-            background: #fff;
-            color: #1a1a2e;
-            text-decoration: none;
-            border-radius: 50px;
-            font-size: 15px;
+            display: flex; align-items: center;
+            justify-content: center; gap: 12px;
+            padding: 18px 24px; background: #fff;
+            color: #1a1a2e; text-decoration: none;
+            border-radius: 50px; font-size: 15px;
             font-weight: 600;
             transition: all 0.25s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-            border: 2px solid transparent;
-        }
-        
-        .link-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, 
-                rgba(102, 126, 234, 0.1),
-                rgba(240, 147, 251, 0.1));
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
         
         .link-btn:hover {
             transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
         }
         
-        .link-btn:hover::before {
-            opacity: 1;
-        }
+        .link-btn i { font-size: 20px; }
         
-        .link-btn:active {
-            transform: translateY(0) scale(1);
-        }
-        
-        .link-btn i {
-            font-size: 20px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .link-btn span {
-            position: relative;
-            z-index: 1;
-            transition: opacity 0.15s ease;
-        }
-        
-        /* Platform icon colors */
         .link-btn.youtube i    { color: #ff0000; }
-        .link-btn.tiktok i     { color: #000000; }
+        .link-btn.tiktok i     { color: #000; }
         .link-btn.twitch i     { color: #9146ff; }
-        .link-btn.instagram i  { 
-            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        .link-btn.instagram i {
+            background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
         .link-btn.facebook i   { color: #1877f2; }
         .link-btn.twitter i    { color: #1da1f2; }
         .link-btn.discord i    { color: #5865f2; }
         .link-btn.spotify i    { color: #1db954; }
         .link-btn.email i      { color: #ea4335; }
+        .link-btn.website i    { color: #333; }
         
-        /* Footer */
         .footer {
             margin-top: 40px;
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 12px;
-            font-weight: 500;
-            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+            color: rgba(255,255,255,0.85);
+            font-size: 12px; font-weight: 500;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.15);
         }
         
-        /* Animations */
-        .container > * {
-            animation: fadeInUp 0.6s ease backwards;
-        }
-        .avatar-wrap { animation-delay: 0.1s; }
-        h1            { animation-delay: 0.2s; }
-        .description  { animation-delay: 0.3s; }
-        .social-icons { animation-delay: 0.4s; }
-        .link-btn:nth-child(1) { animation-delay: 0.5s; }
-        .link-btn:nth-child(2) { animation-delay: 0.6s; }
-        .link-btn:nth-child(3) { animation-delay: 0.7s; }
-        .link-btn:nth-child(4) { animation-delay: 0.8s; }
-        .link-btn:nth-child(5) { animation-delay: 0.9s; }
-        .footer       { animation-delay: 1.0s; }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        [data-en], [data-es] {
-            transition: opacity 0.15s ease;
-        }
-        
-        /* Mobile Optimization */
         @media (max-width: 500px) {
             body { padding: 30px 15px 40px; }
             .avatar-wrap { width: 100px; height: 100px; }
             h1 { font-size: 24px; }
-            .description { font-size: 13px; }
-            .link-btn { padding: 16px 20px; font-size: 14px; }
-            
-            .lang-switcher {
-                top: 12px;
-                right: 12px;
-                padding: 3px;
-            }
-            .lang-btn {
-                padding: 6px 12px;
-                font-size: 11px;
-            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Language Switcher -->
     <div class="lang-switcher">
         <button class="lang-btn active" onclick="setLang('en')" id="btn-en">EN</button>
         <button class="lang-btn" onclick="setLang('es')" id="btn-es">ES</button>
     </div>
 
     <div class="container">
-        
-        <!-- Profile -->
-        <div class="profile">
-            <div class="avatar-wrap">
-                <img class="avatar" src="images/avatar.png" alt="Willy Mena">
-            </div>
-            
-            <h1 data-en="Willy Mena" 
-                data-es="Willy Mena">Willy Mena</h1>
-            
-            <p class="description" 
-               data-en="🎙️ Content Creator & Streamer<br>🎬 Vlogs | Unconventional Talks | IRL<br>☕ Passionate about good coffee<br>👇 Join me on the journey!" 
-               data-es="🎙️ Creador de contenido & Streamer<br>🎬 Vlogs | Charlas Unconventional | IRL<br>☕ Apasionado del buen café<br>👇 ¡Acompáñame en el viaje!">
-                🎙️ Content Creator & Streamer<br>🎬 Vlogs | Unconventional Talks | IRL<br>☕ Passionate about good coffee<br>👇 Join me on the journey!
-            </p>
-            
-            <!-- Small Social Icons Row -->
-            <div class="social-icons">
-                <a href="https://www.youtube.com/@WillyMenag" 
-                   target="_blank" rel="noopener" class="social-icon" title="YouTube">
-                    <i class="fa-brands fa-youtube"></i>
-                </a>
-                <a href="https://www.tiktok.com/@willymenag" 
-                   target="_blank" rel="noopener" class="social-icon" title="TikTok">
-                    <i class="fa-brands fa-tiktok"></i>
-                </a>
-                <a href="https://www.twitch.tv/willymenag" 
-                   target="_blank" rel="noopener" class="social-icon" title="Twitch">
-                    <i class="fa-brands fa-twitch"></i>
-                </a>
-                <a href="https://www.instagram.com/willymenag/" 
-                   target="_blank" rel="noopener" class="social-icon" title="Instagram">
-                    <i class="fa-brands fa-instagram"></i>
-                </a>
-                <a href="https://www.facebook.com/Willymenag" 
-                   target="_blank" rel="noopener" class="social-icon" title="Facebook">
-                    <i class="fa-brands fa-facebook-f"></i>
-                </a>
-            </div>
+        <div class="avatar-wrap">
+            <img class="avatar" src="images/avatar.png" alt="Profile">
         </div>
         
-        <!-- Section Header -->
-        <h2 class="section-header" 
-            data-en="🔗 ALL MY LINKS" 
-            data-es="🔗 TODOS MIS ENLACES">🔗 ALL MY LINKS</h2>
+        <h1 id="name">Loading...</h1>
+        <p class="description" id="bio"></p>
         
-        <!-- Main Link Buttons -->
-        <div class="links">
-            
-            <!-- YouTube -->
-            <a class="link-btn youtube" 
-               href="https://www.youtube.com/@WillyMenag" 
-               target="_blank" 
-               rel="noopener">
-                <i class="fa-brands fa-youtube"></i>
-                <span data-en="Subscribe on YouTube" 
-                      data-es="Suscríbete en YouTube">Subscribe on YouTube</span>
-            </a>
-            
-            <!-- TikTok -->
-            <a class="link-btn tiktok" 
-               href="https://www.tiktok.com/@willymenag" 
-               target="_blank" 
-               rel="noopener">
-                <i class="fa-brands fa-tiktok"></i>
-                <span data-en="Follow on TikTok" 
-                      data-es="Sígueme en TikTok">Follow on TikTok</span>
-            </a>
-            
-            <!-- Twitch -->
-            <a class="link-btn twitch" 
-               href="https://www.twitch.tv/willymenag" 
-               target="_blank" 
-               rel="noopener">
-                <i class="fa-brands fa-twitch"></i>
-                <span data-en="Watch on Twitch" 
-                      data-es="Míralo en Twitch">Watch on Twitch</span>
-            </a>
-            
-            <!-- Instagram -->
-            <a class="link-btn instagram" 
-               href="https://www.instagram.com/willymenag/" 
-               target="_blank" 
-               rel="noopener">
-                <i class="fa-brands fa-instagram"></i>
-                <span data-en="Follow on Instagram" 
-                      data-es="Sígueme en Instagram">Follow on Instagram</span>
-            </a>
-            
-            <!-- Facebook -->
-            <a class="link-btn facebook" 
-               href="https://www.facebook.com/Willymenag" 
-               target="_blank" 
-               rel="noopener">
-                <i class="fa-brands fa-facebook"></i>
-                <span data-en="Follow on Facebook" 
-                      data-es="Sígueme en Facebook">Follow on Facebook</span>
-            </a>
-            
-        </div>
+        <div class="social-icons" id="social-icons"></div>
         
-        <!-- Footer (year auto-updates) -->
+        <h2 class="section-header" id="section-header">🔗 ALL MY LINKS</h2>
+        
+        <div class="links" id="links"></div>
+        
         <div class="footer">
             <p id="footer-text"></p>
         </div>
-        
     </div>
 
-    <!-- Scripts -->
     <script>
-    (function() {
-        
-        // ── Auto-update year in footer ──
-        function updateFooter() {
-            const year = new Date().getFullYear();
-            const lang = document.documentElement.lang || 'en';
-            document.getElementById('footer-text').textContent = 
-                `© ${year} Willy Mena`;
+    let CONTENT = null;
+    let CURRENT_LANG = 'en';
+    
+    const PLATFORM_ICONS = {
+        youtube:   'fa-brands fa-youtube',
+        tiktok:    'fa-brands fa-tiktok',
+        twitch:    'fa-brands fa-twitch',
+        instagram: 'fa-brands fa-instagram',
+        facebook:  'fa-brands fa-facebook',
+        twitter:   'fa-brands fa-x-twitter',
+        discord:   'fa-brands fa-discord',
+        spotify:   'fa-brands fa-spotify',
+        email:     'fa-solid fa-envelope',
+        website:   'fa-solid fa-globe'
+    };
+    
+    const SECTION_HEADERS = {
+        en: '🔗 ALL MY LINKS',
+        es: '🔗 TODOS MIS ENLACES'
+    };
+    
+    async function loadContent() {
+        try {
+            const response = await fetch('content.json?t=' + Date.now());
+            CONTENT = await response.json();
+            document.title = CONTENT.profile.name + ' | Links';
+            renderPage();
+        } catch(e) {
+            console.error('Could not load content.json', e);
+            document.getElementById('name').textContent = 'Error loading content';
         }
+    }
+    
+    function renderPage() {
+        if (!CONTENT) return;
         
-        // ── Language switcher ──
-        function setLang(lang) {
-            const elements = document.querySelectorAll('[data-en], [data-es]');
-            
-            elements.forEach(el => {
-                if (el.hasAttribute('data-' + lang)) {
-                    const newText = el.getAttribute('data-' + lang);
-                    el.style.opacity = '0.3';
-                    setTimeout(() => {
-                        el.innerHTML = newText;
-                        el.style.opacity = '1';
-                    }, 100);
-                }
-            });
-            
+        document.getElementById('name').textContent = CONTENT.profile.name;
+        
+        const bioKey = 'bio_' + CURRENT_LANG;
+        document.getElementById('bio').innerHTML = CONTENT.profile[bioKey];
+        
+        document.getElementById('section-header').textContent = SECTION_HEADERS[CURRENT_LANG];
+        
+        const socialWrap = document.getElementById('social-icons');
+        socialWrap.innerHTML = '';
+        CONTENT.links.filter(l => l.enabled).forEach(link => {
+            const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
+            socialWrap.innerHTML += `
+                <a href="${link.url}" target="_blank" rel="noopener" 
+                   class="social-icon" title="${link.platform}">
+                    <i class="${icon}"></i>
+                </a>
+            `;
+        });
+        
+        const linksWrap = document.getElementById('links');
+        linksWrap.innerHTML = '';
+        CONTENT.links.filter(l => l.enabled).forEach(link => {
+            const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
+            const labelKey = 'label_' + CURRENT_LANG;
+            const label = link[labelKey] || link.label_en || link.platform;
+            linksWrap.innerHTML += `
+                <a class="link-btn ${link.platform}" 
+                   href="${link.url}" 
+                   target="_blank" rel="noopener">
+                    <i class="${icon}"></i>
+                    <span>${label}</span>
+                </a>
+            `;
+        });
+        
+        const year = new Date().getFullYear();
+        document.getElementById('footer-text').textContent = 
+            `© ${year} ${CONTENT.profile.name}`;
+    }
+    
+    function setLang(lang) {
+        CURRENT_LANG = lang;
+        
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById('btn-' + lang).classList.add('active');
+        
+        document.documentElement.lang = lang;
+        
+        try {
+            localStorage.setItem('preferred_lang', lang);
+        } catch(e) {}
+        
+        renderPage();
+    }
+    
+    function detectLanguage() {
+        try {
+            const saved = localStorage.getItem('preferred_lang');
+            if (saved && ['en', 'es'].includes(saved)) {
+                CURRENT_LANG = saved;
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.getElementById('btn-' + saved).classList.add('active');
+                return;
+            }
+        } catch(e) {}
+        
+        const browserLang = (navigator.language || 'en').toLowerCase();
+        if (browserLang.startsWith('es')) {
+            CURRENT_LANG = 'es';
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            document.getElementById('btn-' + lang).classList.add('active');
-            
-            document.documentElement.lang = lang;
-            
-            try {
-                localStorage.setItem('preferred_lang', lang);
-            } catch(e) {}
-            
-            updateFooter();
+            document.getElementById('btn-es').classList.add('active');
         }
-        
-        window.setLang = setLang;
-        
-        function detectLanguage() {
-            try {
-                const saved = localStorage.getItem('preferred_lang');
-                if (saved && ['en', 'es'].includes(saved)) {
-                    setLang(saved);
-                    return;
-                }
-            } catch(e) {}
-            
-            const browserLang = (
-                navigator.language || 
-                navigator.userLanguage || 
-                'en'
-            ).toLowerCase();
-            
-            if (browserLang.startsWith('es')) {
-                setLang('es');
-            } else {
-                setLang('en');
-            }
-        }
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                detectLanguage();
-                updateFooter();
-            });
-        } else {
-            detectLanguage();
-            updateFooter();
-        }
-    })();
+    }
+    
+    detectLanguage();
+    loadContent();
     </script>
-
 </body>
 </html>
