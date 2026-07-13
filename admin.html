@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- QR Code library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -22,6 +24,7 @@
             --success: #4ade80;
             --warning: #fbbf24;
             --shop-color: #ff6b35;
+            --gold: #ffd700;
             --text: #f0f0f5;
             --text-muted: #8888aa;
             --radius: 12px;
@@ -38,7 +41,7 @@
         /* ── TOP NAV ── */
         .topnav {
             position: sticky; top: 0; z-index: 100;
-            background: rgba(15,15,19,0.85);
+            background: rgba(15,15,19,0.9);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
             padding: 0 24px;
@@ -46,30 +49,56 @@
             justify-content: space-between;
             height: 64px;
         }
-
-        .topnav-left {
-            display: flex; align-items: center; gap: 12px;
-        }
-
+        .topnav-left { display: flex; align-items: center; gap: 12px; }
         .topnav-logo {
             width: 36px; height: 36px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--accent);
         }
+        .topnav-title { font-size: 16px; font-weight: 700; color: var(--text); }
+        .topnav-title span { color: var(--accent); }
+        .topnav-right { display: flex; align-items: center; gap: 10px; }
 
-        .topnav-title {
-            font-size: 16px; font-weight: 700;
-            color: var(--text);
+        /* ── TAB NAV ── */
+        .tab-nav {
+            display: flex;
+            gap: 2px;
+            background: var(--surface);
+            padding: 6px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px 14px;
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .tab-btn:hover { color: var(--text); }
+        .tab-btn.active {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(124,111,247,0.35);
         }
 
-        .topnav-title span {
-            color: var(--accent);
-        }
-
-        .topnav-right {
-            display: flex; align-items: center; gap: 10px;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         /* ── LAYOUT ── */
         .layout {
@@ -78,13 +107,11 @@
             gap: 0;
             min-height: calc(100vh - 64px);
         }
-
         .editor-panel {
-            padding: 32px 28px;
+            padding: 24px 28px;
             border-right: 1px solid var(--border);
             overflow-y: auto;
         }
-
         .preview-panel {
             position: sticky;
             top: 64px;
@@ -105,48 +132,16 @@
             font-family: inherit;
             text-decoration: none;
         }
-
-        .btn-danger {
-            background: transparent;
-            color: var(--danger);
-            border: 1px solid var(--danger);
-        }
-        .btn-danger:hover {
-            background: var(--danger);
-            color: #fff;
-        }
-
-        .btn-ghost {
-            background: var(--surface2);
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-        }
-        .btn-ghost:hover {
-            color: var(--text);
-            border-color: var(--accent);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: #000;
-            font-weight: 700;
-        }
-        .btn-success:hover {
-            filter: brightness(1.1);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(74,222,128,0.35);
-        }
-
-        .btn-sm {
-            padding: 6px 14px;
-            font-size: 12px;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
+        .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: #fff; }
+        .btn-ghost { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+        .btn-success { background: var(--success); color: #000; font-weight: 700; }
+        .btn-success:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(74,222,128,0.35); }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-sm { padding: 6px 14px; font-size: 12px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
         /* ── SECTIONS ── */
         .section {
@@ -156,43 +151,34 @@
             padding: 24px;
             margin-bottom: 20px;
         }
-
         .section-title {
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 13px; font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            display: flex; align-items: center; gap: 8px;
         }
-
-        .section-title i {
-            color: var(--accent);
+        .section-title i { color: var(--accent); }
+        .section-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: -12px;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
 
         /* ── FORM ELEMENTS ── */
-        .field {
-            margin-bottom: 16px;
-        }
-
+        .field { margin-bottom: 16px; }
         label {
             display: block;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 12px; font-weight: 600;
             color: var(--text-muted);
             margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
-        input[type="text"],
-        input[type="url"],
-        input[type="password"],
-        textarea,
-        select {
+        input[type="text"], input[type="url"], input[type="password"], input[type="date"], input[type="color"], textarea, select {
             width: 100%;
             background: var(--bg);
             border: 1px solid var(--border);
@@ -204,36 +190,23 @@
             transition: border-color 0.2s;
             outline: none;
         }
-
         input:focus, textarea:focus, select:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(124,111,247,0.15);
         }
-
-        input:disabled, select:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        input:disabled, select:disabled { opacity: 0.6; cursor: not-allowed; }
+        textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+        select option { background: var(--surface2); }
+        input[type="color"] {
+            padding: 4px;
+            height: 42px;
+            cursor: pointer;
         }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-            line-height: 1.5;
-        }
-
-        select option {
-            background: var(--surface2);
-        }
+        input[type="date"] { color-scheme: dark; }
 
         /* ── TOGGLE ── */
-        .toggle {
-            position: relative;
-            width: 44px; height: 24px;
-            flex-shrink: 0;
-        }
-
+        .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
         .toggle input { opacity: 0; width: 0; height: 0; }
-
         .toggle-slider {
             position: absolute; inset: 0;
             background: var(--border);
@@ -241,7 +214,6 @@
             cursor: pointer;
             transition: 0.3s;
         }
-
         .toggle-slider::before {
             content: '';
             position: absolute;
@@ -251,14 +223,8 @@
             border-radius: 50%;
             transition: 0.3s;
         }
-
-        .toggle input:checked + .toggle-slider {
-            background: var(--accent);
-        }
-
-        .toggle input:checked + .toggle-slider::before {
-            transform: translateX(20px);
-        }
+        .toggle input:checked + .toggle-slider { background: var(--accent); }
+        .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
 
         /* ── LINK CARDS ── */
         .link-card {
@@ -267,88 +233,59 @@
             border-radius: var(--radius);
             padding: 16px;
             margin-bottom: 12px;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
-
-        .link-card:hover {
-            border-color: var(--accent);
-        }
-
-        /* Special locked card (merch/shop) */
+        .link-card:hover { border-color: var(--accent); }
         .link-card.locked {
             background: linear-gradient(135deg, rgba(255,107,53,0.06) 0%, rgba(255,107,53,0.02) 100%);
             border-color: rgba(255,107,53,0.35);
         }
-
-        .link-card.locked:hover {
-            border-color: rgba(255,107,53,0.6);
+        .link-card.locked:hover { border-color: rgba(255,107,53,0.6); }
+        .link-card.featured-card {
+            background: linear-gradient(135deg, rgba(255,215,0,0.08) 0%, rgba(255,215,0,0.02) 100%);
+            border-color: rgba(255,215,0,0.4);
+            box-shadow: 0 0 0 1px rgba(255,215,0,0.2);
         }
-
         .link-card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 14px; flex-wrap: wrap;
         }
-
         .link-card-drag {
             color: var(--text-muted);
-            cursor: grab;
-            font-size: 16px;
-            padding: 4px;
+            cursor: grab; font-size: 16px; padding: 4px;
         }
-
         .link-card-drag:active { cursor: grabbing; }
-
         .platform-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 600;
             background: var(--surface2);
             border: 1px solid var(--border);
             flex-shrink: 0;
         }
-
-        .locked-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-            background: rgba(255,107,53,0.15);
-            color: var(--shop-color);
-            border: 1px solid rgba(255,107,53,0.35);
+        .locked-badge, .featured-badge, .schedule-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 10px; border-radius: 20px;
+            font-size: 10px; font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
+        .locked-badge { background: rgba(255,107,53,0.15); color: var(--shop-color); border: 1px solid rgba(255,107,53,0.35); }
+        .featured-badge { background: rgba(255,215,0,0.15); color: var(--gold); border: 1px solid rgba(255,215,0,0.4); }
+        .schedule-badge.active { background: rgba(74,222,128,0.15); color: var(--success); border: 1px solid rgba(74,222,128,0.4); }
+        .schedule-badge.pending { background: rgba(251,191,36,0.15); color: var(--warning); border: 1px solid rgba(251,191,36,0.4); }
+        .schedule-badge.expired { background: rgba(247,95,111,0.15); color: var(--danger); border: 1px solid rgba(247,95,111,0.4); }
         .link-card-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-left: auto;
+            display: flex; align-items: center;
+            gap: 8px; margin-left: auto;
         }
-
         .link-card-body {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
-
-        .link-card-body .field-full {
-            grid-column: 1 / -1;
-        }
-
-        .link-card-body .field {
-            margin-bottom: 0;
-        }
-
+        .link-card-body .field-full { grid-column: 1 / -1; }
+        .link-card-body .field { margin-bottom: 0; }
         .lock-notice {
             font-size: 11px;
             color: var(--text-muted);
@@ -356,7 +293,47 @@
             font-style: italic;
         }
 
-        /* Platform icon colors — admin badges */
+        /* Feature button per card */
+        .feature-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+        .feature-btn:hover { color: var(--gold); border-color: var(--gold); }
+        .feature-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
+
+        /* Schedule expand */
+        .schedule-section {
+            grid-column: 1 / -1;
+            padding: 12px;
+            background: var(--surface2);
+            border-radius: 8px;
+            display: none;
+        }
+        .schedule-section.show { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .schedule-toggle-btn {
+            background: transparent;
+            border: 1px dashed var(--border);
+            color: var(--text-muted);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            width: 100%;
+            grid-column: 1 / -1;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .schedule-toggle-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+        /* Platform icon colors (badges) */
         .pi-youtube { color: #ff0000; }
         .pi-tiktok { color: #fff; }
         .pi-twitch { color: #9146ff; }
@@ -368,8 +345,20 @@
         .pi-email { color: #ea4335; }
         .pi-website { color: #aaa; }
         .pi-shop { color: var(--shop-color); }
+        .pi-linkedin { color: #0a66c2; }
+        .pi-snapchat { color: #fffc00; }
+        .pi-threads { color: #fff; }
+        .pi-kick { color: #53fc19; }
+        .pi-patreon { color: #ff424d; }
+        .pi-kofi { color: #ff5e5b; }
+        .pi-cameo { color: #ff008a; }
+        .pi-substack { color: #ff6719; }
+        .pi-applepodcasts { color: #872ec4; }
+        .pi-soundcloud { color: #ff5500; }
+        .pi-amazonmusic { color: #25d1da; }
+        .pi-custom { color: #aaa; }
 
-        /* ── ADD LINK BUTTON ── */
+        /* Add link button */
         .add-link-btn {
             width: 100%;
             padding: 14px;
@@ -377,55 +366,43 @@
             border: 2px dashed var(--border);
             border-radius: var(--radius);
             color: var(--text-muted);
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 14px; font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             font-family: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            display: flex; align-items: center;
+            justify-content: center; gap: 8px;
         }
-
         .add-link-btn:hover {
             border-color: var(--accent);
             color: var(--accent);
             background: rgba(124,111,247,0.05);
         }
-
-        /* Add merch button (if not present) */
         .add-merch-btn {
-            width: 100%;
-            padding: 12px;
+            width: 100%; padding: 12px;
             background: rgba(255,107,53,0.08);
             border: 2px dashed rgba(255,107,53,0.4);
             border-radius: var(--radius);
             color: var(--shop-color);
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 13px; font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             font-family: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            display: flex; align-items: center;
+            justify-content: center; gap: 8px;
             margin-bottom: 10px;
         }
-
         .add-merch-btn:hover {
             background: rgba(255,107,53,0.15);
             border-color: var(--shop-color);
         }
 
-        /* ── AVATAR SECTION ── */
+        /* Avatar */
         .avatar-editor {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-
         .avatar-preview {
             width: 80px; height: 80px;
             border-radius: 50%;
@@ -433,27 +410,28 @@
             border: 3px solid var(--accent);
             flex-shrink: 0;
         }
-
         .avatar-inputs { flex: 1; }
+        .upload-progress {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--accent);
+        }
 
-        /* ── STATUS BAR ── */
+        /* Status bar */
         .status-bar {
             padding: 10px 20px;
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 13px; font-weight: 500;
             border-radius: 8px;
             margin-bottom: 16px;
             display: none;
-            align-items: center;
-            gap: 8px;
+            align-items: center; gap: 8px;
         }
-
         .status-bar.show { display: flex; }
         .status-bar.info { background: rgba(124,111,247,0.15); color: var(--accent); border: 1px solid rgba(124,111,247,0.3); }
         .status-bar.success { background: rgba(74,222,128,0.15); color: var(--success); border: 1px solid rgba(74,222,128,0.3); }
         .status-bar.error { background: rgba(247,95,111,0.15); color: var(--danger); border: 1px solid rgba(247,95,111,0.3); }
 
-        /* ── TOKEN SECTION ── */
+        /* Token section */
         .token-section {
             background: rgba(124,111,247,0.08);
             border: 1px solid rgba(124,111,247,0.25);
@@ -461,40 +439,131 @@
             padding: 20px;
             margin-bottom: 20px;
         }
-
         .token-row {
-            display: flex;
-            gap: 10px;
+            display: flex; gap: 10px;
             align-items: flex-end;
         }
+        .token-row .field { flex: 1; margin-bottom: 0; }
+        .token-status {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 600;
+            padding: 4px 10px; border-radius: 20px;
+            margin-top: 8px;
+        }
+        .token-status.saved { background: rgba(74,222,128,0.15); color: var(--success); }
+        .token-status.missing { background: rgba(247,95,111,0.15); color: var(--danger); }
 
-        .token-row .field {
-            flex: 1;
-            margin-bottom: 0;
+        /* ═══ THEME EDITOR ═══ */
+        .theme-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .theme-preset {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .theme-preset:hover { transform: scale(1.05); }
+        .theme-preset.active { border-color: var(--accent); }
+        .theme-preset::after {
+            content: attr(data-name);
+            position: absolute;
+            bottom: 4px; left: 4px; right: 4px;
+            font-size: 9px;
+            color: #fff;
+            font-weight: 700;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .theme-preset.active::before {
+            content: '✓';
+            position: absolute;
+            top: 4px; right: 6px;
+            color: #fff;
+            font-weight: 800;
+            font-size: 14px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
 
-        .token-status {
+        .color-pickers {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .color-picker-item {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 6px;
+        }
+        .color-picker-item input[type="color"] {
+            width: 100%;
+        }
+        .color-picker-remove {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            font-size: 11px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+        }
+        .toggle-row-label { font-weight: 600; font-size: 14px; }
+        .toggle-row-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+        /* QR code */
+        #qr-code {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            max-width: 250px;
+            margin: 0 auto;
+        }
+        .qr-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* Analytics dashboard */
+        .analytics-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .analytics-link {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 12px;
+            color: var(--accent);
+            text-decoration: none;
             font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            margin-top: 8px;
+            font-size: 14px;
         }
+        .analytics-link:hover { color: var(--accent-hover); }
 
-        .token-status.saved {
-            background: rgba(74,222,128,0.15);
-            color: var(--success);
-        }
-
-        .token-status.missing {
-            background: rgba(247,95,111,0.15);
-            color: var(--danger);
-        }
-
-        /* ── PREVIEW PANEL ── */
+        /* ═══ PREVIEW PANEL ═══ */
         .preview-header {
             padding: 16px 20px;
             border-bottom: 1px solid var(--border);
@@ -504,37 +573,22 @@
             background: var(--surface);
             flex-shrink: 0;
         }
-
         .preview-header-title {
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 13px; font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
-        .preview-lang-btns {
-            display: flex;
-            gap: 4px;
-        }
-
+        .preview-lang-btns { display: flex; gap: 4px; }
         .preview-lang-btn {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            border: none;
-            cursor: pointer;
-            background: var(--bg);
-            color: var(--text-muted);
+            padding: 5px 12px; border-radius: 20px;
+            font-size: 11px; font-weight: 700;
+            border: none; cursor: pointer;
+            background: var(--bg); color: var(--text-muted);
             font-family: inherit;
             transition: all 0.2s;
         }
-
-        .preview-lang-btn.active {
-            background: var(--accent);
-            color: #fff;
-        }
+        .preview-lang-btn.active { background: var(--accent); color: #fff; }
 
         .preview-body {
             flex: 1;
@@ -543,35 +597,23 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
+            transition: background 0.5s;
         }
-
         @keyframes gradientShift {
             0%   { background-position: 0% 50%; }
             50%  { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        .preview-container {
-            max-width: 360px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .preview-avatar-wrap {
-            width: 90px; height: 90px;
-            margin: 10px auto 16px;
-            position: relative;
-        }
-
+        .preview-container { max-width: 360px; margin: 0 auto; text-align: center; }
+        .preview-avatar-wrap { width: 90px; height: 90px; margin: 10px auto 16px; position: relative; }
         .preview-avatar-wrap::before {
             content: '';
-            position: absolute;
-            inset: -4px;
+            position: absolute; inset: -4px;
             border-radius: 50%;
             background: rgba(255,255,255,0.95);
             z-index: 1;
         }
-
         .preview-avatar {
             width: 100%; height: 100%;
             border-radius: 50%;
@@ -580,92 +622,57 @@
             border: 3px solid #fff;
             box-shadow: 0 10px 40px rgba(0,0,0,0.25);
         }
-
         .preview-name {
-            color: #fff;
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 10px;
+            color: #fff; font-size: 22px;
+            font-weight: 800; margin-bottom: 10px;
             text-shadow: 0 2px 15px rgba(0,0,0,0.2);
         }
-
         .preview-bio {
             color: rgba(255,255,255,0.95);
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 12px; font-weight: 500;
             line-height: 1.6;
             margin: 0 auto 20px;
             text-shadow: 0 1px 8px rgba(0,0,0,0.15);
         }
-
         .preview-social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 24px;
+            display: flex; justify-content: center;
+            gap: 10px; margin-bottom: 24px;
             flex-wrap: wrap;
         }
-
         .preview-social-icon {
             width: 36px; height: 36px;
-            display: flex; align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             background: rgba(255,255,255,0.25);
             backdrop-filter: blur(10px);
             border-radius: 50%;
-            color: #fff;
-            font-size: 15px;
+            color: #fff; font-size: 15px;
             text-decoration: none;
             border: 1px solid rgba(255,255,255,0.3);
         }
-
         .preview-section-header {
-            color: #fff;
-            font-size: 12px;
-            font-weight: 700;
-            margin: 0 0 14px;
+            color: #fff; font-size: 12px;
+            font-weight: 700; margin: 0 0 14px;
             text-shadow: 0 1px 8px rgba(0,0,0,0.15);
         }
-
-        .preview-links {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        /* Base preview button */
+        .preview-links { display: flex; flex-direction: column; gap: 10px; }
         .preview-link-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 14px 20px;
-            background: #fff;
-            color: #1a1a2e;
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; padding: 14px 20px;
+            background: #fff; color: #1a1a2e;
             text-decoration: none;
             border-radius: 50px;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 13px; font-weight: 600;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             border: 2px solid transparent;
+            position: relative;
         }
-
-        /* IMPORTANT: reset icon styles so only the intended color applies */
-        .preview-link-btn i {
-            font-size: 17px;
-            background: none;
-            -webkit-background-clip: initial;
-            background-clip: initial;
-            -webkit-text-fill-color: initial;
-        }
-
+        .preview-link-btn i { font-size: 17px; background: none; -webkit-background-clip: initial; background-clip: initial; -webkit-text-fill-color: initial; }
         .preview-link-btn.pv-youtube i { color: #ff0000; }
         .preview-link-btn.pv-tiktok i { color: #000; }
         .preview-link-btn.pv-twitch i { color: #9146ff; }
         .preview-link-btn.pv-instagram i {
             background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
-            -webkit-background-clip: text;
-            background-clip: text;
+            -webkit-background-clip: text; background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .preview-link-btn.pv-facebook i { color: #1877f2; }
@@ -675,33 +682,59 @@
         .preview-link-btn.pv-email i { color: #ea4335; }
         .preview-link-btn.pv-website i { color: #333; }
         .preview-link-btn.pv-shop i { color: var(--shop-color); }
+        .preview-link-btn.pv-linkedin i { color: #0a66c2; }
+        .preview-link-btn.pv-snapchat i { color: #fffc00; text-shadow: 0 0 2px #000; }
+        .preview-link-btn.pv-threads i { color: #000; }
+        .preview-link-btn.pv-kick i { color: #53fc19; }
+        .preview-link-btn.pv-patreon i { color: #ff424d; }
+        .preview-link-btn.pv-kofi i { color: #ff5e5b; }
+        .preview-link-btn.pv-cameo i { color: #ff008a; }
+        .preview-link-btn.pv-substack i { color: #ff6719; }
+        .preview-link-btn.pv-applepodcasts i { color: #872ec4; }
+        .preview-link-btn.pv-soundcloud i { color: #ff5500; }
+        .preview-link-btn.pv-amazonmusic i { color: #25d1da; }
+        .preview-link-btn.pv-custom i { color: #666; }
 
-        /* Shop premium styling in preview */
         .preview-link-btn.pv-shop {
             background: linear-gradient(135deg, #fff 0%, #fff5ef 100%);
             border: 2px solid var(--shop-color);
             box-shadow: 0 4px 20px rgba(255,107,53,0.25);
         }
+        .preview-link-btn.pv-featured {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        .preview-link-btn.pv-featured::after {
+            content: '⭐';
+            position: absolute;
+            top: -6px; right: -6px;
+            background: #ffd700;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px;
+            box-shadow: 0 2px 6px rgba(255,215,0,0.6);
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 4px 20px rgba(255,215,0,0.4), 0 0 0 0 rgba(255,215,0,0.7); }
+            50%      { box-shadow: 0 4px 20px rgba(255,215,0,0.6), 0 0 0 12px rgba(255,215,0,0); }
+        }
 
         .preview-footer {
             margin-top: 30px;
             color: rgba(255,255,255,0.85);
-            font-size: 11px;
-            font-weight: 500;
+            font-size: 11px; font-weight: 500;
         }
 
-        /* ── PUBLISH FOOTER ── */
+        /* Publish footer */
         .publish-footer {
             border-top: 1px solid var(--border);
             padding: 20px 28px;
-            display: flex;
-            align-items: center;
+            display: flex; align-items: center;
             justify-content: space-between;
             gap: 12px;
             background: var(--surface);
             flex-shrink: 0;
         }
-
         .unsaved-dot {
             width: 8px; height: 8px;
             border-radius: 50%;
@@ -709,31 +742,24 @@
             display: none;
             flex-shrink: 0;
         }
-
         .unsaved-dot.show { display: block; }
-
         .publish-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
+            display: flex; align-items: center;
+            gap: 8px; font-size: 13px;
             color: var(--text-muted);
         }
 
-        /* ── MODAL ── */
+        /* Modal */
         .modal-overlay {
             position: fixed; inset: 0;
             background: rgba(0,0,0,0.7);
             backdrop-filter: blur(4px);
             z-index: 1000;
             display: none;
-            align-items: center;
-            justify-content: center;
+            align-items: center; justify-content: center;
             padding: 20px;
         }
-
         .modal-overlay.show { display: flex; }
-
         .modal {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -742,28 +768,11 @@
             max-width: 440px;
             width: 100%;
         }
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .modal-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
 
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .modal-desc {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        /* ── SPINNER ── */
+        /* Spinner */
         .spinner {
             width: 16px; height: 16px;
             border: 2px solid rgba(255,255,255,0.3);
@@ -772,32 +781,35 @@
             animation: spin 0.7s linear infinite;
             display: none;
         }
-
         .spinner.show { display: block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .link-card.dragging { opacity: 0.4; border: 2px dashed var(--accent); }
+        .link-card.drag-over { border-color: var(--accent); background: rgba(124,111,247,0.08); }
+
+        /* Custom domain instructions */
+        .instructions-box {
+            background: rgba(124,111,247,0.05);
+            border-left: 3px solid var(--accent);
+            padding: 14px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text);
+            margin-top: 10px;
         }
-
-        .link-card.dragging {
-            opacity: 0.4;
-            border: 2px dashed var(--accent);
-        }
-
-        .link-card.drag-over {
-            border-color: var(--accent);
-            background: rgba(124,111,247,0.08);
+        .instructions-box code {
+            background: var(--bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
         }
 
         @media (max-width: 900px) {
             .layout { grid-template-columns: 1fr; }
-            .preview-panel {
-                position: static;
-                height: auto;
-                min-height: 600px;
-            }
+            .preview-panel { position: static; height: auto; min-height: 600px; }
         }
-
         @media (max-width: 500px) {
             .topnav { padding: 0 16px; }
             .editor-panel { padding: 20px 16px; }
@@ -844,85 +856,225 @@
             <div id="token-status-badge"></div>
         </div>
 
-        <div class="section">
-            <div class="section-title">
-                <i class="fa-solid fa-user"></i> Profile
+        <!-- TAB NAVIGATION -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('profile')"><i class="fa-solid fa-user"></i> Profile</button>
+            <button class="tab-btn" onclick="switchTab('links')"><i class="fa-solid fa-link"></i> Links</button>
+            <button class="tab-btn" onclick="switchTab('theme')"><i class="fa-solid fa-palette"></i> Theme</button>
+            <button class="tab-btn" onclick="switchTab('tools')"><i class="fa-solid fa-wrench"></i> Tools</button>
+        </div>
+
+        <!-- ══ TAB: PROFILE ══ -->
+        <div class="tab-content active" id="tab-profile">
+            <div class="section">
+                <div class="section-title"><i class="fa-solid fa-user"></i> Profile Info</div>
+
+                <div class="field">
+                    <label>Profile Picture</label>
+                    <div class="avatar-editor">
+                        <img src="images/avatar.png" alt="avatar" class="avatar-preview" id="avatar-preview">
+                        <div class="avatar-inputs">
+                            <div class="field" style="margin-bottom:8px;">
+                                <label>Image URL (external)</label>
+                                <input type="url" id="avatar-url" placeholder="https://... or upload below">
+                            </div>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                <label class="btn btn-primary btn-sm" style="cursor:pointer; margin:0;">
+                                    <i class="fa-solid fa-upload"></i> Upload to GitHub
+                                    <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+                                </label>
+                                <button class="btn btn-ghost btn-sm" onclick="applyAvatarUrl()">
+                                    <i class="fa-solid fa-check"></i> Use URL
+                                </button>
+                            </div>
+                            <div id="upload-progress" class="upload-progress"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Display Name</label>
+                    <input type="text" id="profile-name" placeholder="Your Name" oninput="livePreview()">
+                </div>
+
+                <div class="field">
+                    <label>Bio — English</label>
+                    <textarea id="bio-en" placeholder="Bio in English" oninput="livePreview()"></textarea>
+                    <small style="color:var(--text-muted); font-size:11px; margin-top:4px; display:block;">
+                        Use &lt;br&gt; to add a new line.
+                    </small>
+                </div>
+
+                <div class="field">
+                    <label>Bio — Español</label>
+                    <textarea id="bio-es" placeholder="Bio en Español" oninput="livePreview()"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ TAB: LINKS ══ -->
+        <div class="tab-content" id="tab-links">
+            <div class="section">
+                <div class="section-title">
+                    <i class="fa-solid fa-link"></i> Links
+                    <span style="margin-left:auto; font-size:11px; color:var(--text-muted); text-transform:none; letter-spacing:0;">
+                        Drag to reorder · Click ⭐ to feature
+                    </span>
+                </div>
+
+                <button class="add-merch-btn" id="add-merch-btn" onclick="addMerchLink()" style="display:none;">
+                    <i class="fa-solid fa-bag-shopping"></i> Add Merch Shop Link Back
+                </button>
+
+                <div id="links-container"></div>
+
+                <button class="add-link-btn" onclick="addLink()">
+                    <i class="fa-solid fa-plus"></i> Add New Link
+                </button>
+            </div>
+        </div>
+
+        <!-- ══ TAB: THEME ══ -->
+        <div class="tab-content" id="tab-theme">
+            <div class="section">
+                <div class="section-title"><i class="fa-solid fa-palette"></i> Background Theme</div>
+                <div class="section-subtitle">Pick a preset or build your own gradient with custom colors.</div>
+
+                <label style="margin-bottom:10px;">Presets</label>
+                <div class="theme-presets" id="theme-presets"></div>
+
+                <label style="margin-top:20px;">Custom Colors (2 – 5 colors)</label>
+                <div class="color-pickers" id="color-pickers"></div>
+                <button class="btn btn-ghost btn-sm" onclick="addColor()" id="add-color-btn">
+                    <i class="fa-solid fa-plus"></i> Add Color
+                </button>
             </div>
 
-            <div class="field">
-                <label>Profile Picture</label>
-                <div class="avatar-editor">
-                    <img src="images/avatar.png" alt="avatar" class="avatar-preview" id="avatar-preview">
-                    <div class="avatar-inputs">
-                        <div class="field" style="margin-bottom:8px;">
-                            <label>Image URL</label>
-                            <input type="url" id="avatar-url" placeholder="https://... or leave blank to upload">
-                        </div>
-                        <div style="display:flex; gap:8px;">
-                            <label class="btn btn-ghost btn-sm" style="cursor:pointer; margin:0;">
-                                <i class="fa-solid fa-upload"></i> Upload
-                                <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
-                            </label>
-                            <button class="btn btn-ghost btn-sm" onclick="applyAvatarUrl()">
-                                <i class="fa-solid fa-check"></i> Apply URL
-                            </button>
-                        </div>
+            <div class="section">
+                <div class="section-title"><i class="fa-solid fa-moon"></i> Display Options</div>
+
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-row-label">🌙 Dark Mode by Default</div>
+                        <div class="toggle-row-desc">Visitors see dark background/cards on first load</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="dark-mode-toggle" onchange="onThemeChange()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-row-label">🎵 Background Music</div>
+                        <div class="toggle-row-desc">Show a music button for optional playback</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="music-toggle" onchange="onMusicToggle()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="field" id="music-url-field" style="display:none; margin-top:14px;">
+                    <label>Music URL (MP3 file)</label>
+                    <input type="url" id="music-url" placeholder="https://example.com/song.mp3" oninput="onThemeChange()">
+                    <small style="color:var(--text-muted); font-size:11px; margin-top:4px; display:block;">
+                        Direct link to an MP3 file. Try free music from <a href="https://pixabay.com/music/" target="_blank" style="color:var(--accent);">Pixabay Music</a>.
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ TAB: TOOLS ══ -->
+        <div class="tab-content" id="tab-tools">
+
+            <div class="section">
+                <div class="section-title"><i class="fa-solid fa-chart-line"></i> Analytics</div>
+                <div class="section-subtitle">Track views and clicks with Google Analytics.</div>
+
+                <div class="field">
+                    <label>Google Analytics Measurement ID</label>
+                    <input type="text" id="ga-id" placeholder="G-XXXXXXXXXX" oninput="markChanged()">
+                    <small style="color:var(--text-muted); font-size:11px; margin-top:4px; display:block;">
+                        Get yours free at <a href="https://analytics.google.com" target="_blank" style="color:var(--accent);">analytics.google.com</a>
+                    </small>
+                </div>
+
+                <div class="analytics-card" id="analytics-status">
+                    <div id="analytics-status-content"></div>
+                </div>
+
+                <a href="https://analytics.google.com" target="_blank" class="analytics-link">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Google Analytics Dashboard
+                </a>
+            </div>
+
+            <div class="section">
+                <div class="section-title"><i class="fa-solid fa-qrcode"></i> QR Code</div>
+                <div class="section-subtitle">Print this QR code on business cards, stickers, or promotional material.</div>
+
+                <div id="qr-code"></div>
+
+                <div class="qr-actions">
+                    <button class="btn btn-primary btn-sm" onclick="downloadQR('png')">
+                        <i class="fa-solid fa-download"></i> Download PNG
+                    </button>
+                    <button class="btn btn-ghost btn-sm" onclick="printQR()">
+                        <i class="fa-solid fa-print"></i> Print
+                    </button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title"><i class="fa-solid fa-globe"></i> Custom Domain</div>
+                <div class="section-subtitle">Use your own domain like willymena.com instead of willymenag.github.io.</div>
+
+                <div class="instructions-box">
+                    <strong>How to set up a custom domain:</strong><br><br>
+                    <strong>1.</strong> Buy a domain from Namecheap, GoDaddy, or similar (~$10/year)<br>
+                    <strong>2.</strong> In your domain's DNS settings, add these <code>A</code> records pointing to GitHub Pages:<br>
+                    <div style="margin: 8px 0; padding: 8px; background: var(--bg); border-radius: 4px; font-family: monospace; font-size: 11px;">
+                        185.199.108.153<br>
+                        185.199.109.153<br>
+                        185.199.110.153<br>
+                        185.199.111.153
+                    </div>
+                    <strong>3.</strong> Add a <code>CNAME</code> record for <code>www</code> pointing to <code>willymenag.github.io</code><br>
+                    <strong>4.</strong> Enter your custom domain below and click Save — it will create a CNAME file in your repo<br>
+                    <strong>5.</strong> Go to your GitHub repo → Settings → Pages → set your custom domain there too<br>
+                    <strong>6.</strong> Wait 24 hours for DNS to propagate — done! 🎉
+                </div>
+
+                <div class="field" style="margin-top:16px;">
+                    <label>Custom Domain (optional)</label>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="custom-domain" placeholder="willymena.com">
+                        <button class="btn btn-primary btn-sm" onclick="saveCustomDomain()" style="white-space:nowrap;">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Domain
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <div class="field">
-                <label>Display Name</label>
-                <input type="text" id="profile-name" placeholder="Your Name" oninput="livePreview()">
+            <div class="section" style="border-color: rgba(247,95,111,0.3);">
+                <div class="section-title" style="color: var(--danger);">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Reset
+                </div>
+                <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
+                    Reload the current content from GitHub, discarding all unsaved changes.
+                </p>
+                <button class="btn btn-danger btn-sm" onclick="confirmReset()">
+                    <i class="fa-solid fa-rotate-left"></i> Discard Changes & Reload
+                </button>
             </div>
 
-            <div class="field">
-                <label>Bio — English</label>
-                <textarea id="bio-en" placeholder="Bio in English" oninput="livePreview()"></textarea>
-                <small style="color:var(--text-muted); font-size:11px; margin-top:4px; display:block;">
-                    Use &lt;br&gt; to add a new line.
-                </small>
-            </div>
-
-            <div class="field">
-                <label>Bio — Español</label>
-                <textarea id="bio-es" placeholder="Bio en Español" oninput="livePreview()"></textarea>
-            </div>
         </div>
-
-        <div class="section">
-            <div class="section-title">
-                <i class="fa-solid fa-link"></i> Links
-                <span style="margin-left:auto; font-size:11px; color:var(--text-muted); text-transform:none; letter-spacing:0;">
-                    Drag to reorder
-                </span>
-            </div>
-
-            <button class="add-merch-btn" id="add-merch-btn" onclick="addMerchLink()" style="display:none;">
-                <i class="fa-solid fa-bag-shopping"></i> Add Merch Shop Link Back
-            </button>
-
-            <div id="links-container"></div>
-
-            <button class="add-link-btn" onclick="addLink()">
-                <i class="fa-solid fa-plus"></i> Add New Link
-            </button>
-        </div>
-
-        <div class="section" style="border-color: rgba(247,95,111,0.3);">
-            <div class="section-title" style="color: var(--danger);">
-                <i class="fa-solid fa-triangle-exclamation"></i> Reset
-            </div>
-            <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
-                Reload the current content from GitHub, discarding all unsaved changes.
-            </p>
-            <button class="btn btn-danger btn-sm" onclick="confirmReset()">
-                <i class="fa-solid fa-rotate-left"></i> Discard Changes & Reload
-            </button>
-        </div>
+        <!-- end tab-tools -->
 
     </div>
+    <!-- end editor-panel -->
 
+    <!-- ══ PREVIEW PANEL ══ -->
     <div class="preview-panel">
         <div class="preview-header">
             <span class="preview-header-title"><i class="fa-solid fa-eye"></i> Live Preview</span>
@@ -973,9 +1125,7 @@
 <div class="modal-overlay" id="reset-modal">
     <div class="modal">
         <div class="modal-title">⚠️ Discard Changes?</div>
-        <div class="modal-desc">
-            All unsaved changes will be lost.
-        </div>
+        <div class="modal-desc">All unsaved changes will be lost.</div>
         <div class="modal-actions">
             <button class="btn btn-ghost" onclick="closeResetModal()">Cancel</button>
             <button class="btn btn-danger" onclick="resetAndReload()">
@@ -992,15 +1142,19 @@
 const REPO_OWNER = 'willymenag';
 const REPO_NAME  = 'willymenag.github.io';
 const CONTENT_PATH = 'content.json';
+const AVATAR_PATH = 'images/avatar.png';
+const CNAME_PATH = 'CNAME';
 const GITHUB_API = 'https://api.github.com';
+const SITE_URL = 'https://willymenag.github.io/';
 
-// The default merch link — used when re-adding it
 const DEFAULT_MERCH = {
     enabled: true,
     platform: 'shop',
     url: 'https://willy-mena-shop.fourthwall.com/en-cad',
     label_en: '🛍️ Shop My Merch',
-    label_es: '🛍️ Compra Mi Merch'
+    label_es: '🛍️ Compra Mi Merch',
+    start_date: '',
+    end_date: ''
 };
 
 const PLATFORM_ICONS = {
@@ -1014,7 +1168,19 @@ const PLATFORM_ICONS = {
     spotify:   'fa-brands fa-spotify',
     email:     'fa-solid fa-envelope',
     website:   'fa-solid fa-globe',
-    shop:      'fa-solid fa-bag-shopping'
+    shop:      'fa-solid fa-bag-shopping',
+    linkedin:  'fa-brands fa-linkedin-in',
+    snapchat:  'fa-brands fa-snapchat',
+    threads:   'fa-brands fa-threads',
+    kick:      'fa-solid fa-video',
+    patreon:   'fa-brands fa-patreon',
+    kofi:      'fa-solid fa-mug-hot',
+    cameo:     'fa-solid fa-star',
+    substack:  'fa-solid fa-newspaper',
+    applepodcasts: 'fa-brands fa-podcast',
+    soundcloud: 'fa-brands fa-soundcloud',
+    amazonmusic: 'fa-brands fa-amazon',
+    custom:    'fa-solid fa-link'
 };
 
 const PLATFORM_LABELS = {
@@ -1028,23 +1194,87 @@ const PLATFORM_LABELS = {
     spotify:   'Spotify',
     email:     'Email',
     website:   'Website',
-    shop:      '🛍️ Merch Shop'
+    shop:      '🛍️ Merch Shop',
+    linkedin:  'LinkedIn',
+    snapchat:  'Snapchat',
+    threads:   'Threads',
+    kick:      'Kick',
+    patreon:   'Patreon',
+    kofi:      'Ko-fi',
+    cameo:     'Cameo',
+    substack:  'Substack',
+    applepodcasts: 'Apple Podcasts',
+    soundcloud: 'SoundCloud',
+    amazonmusic: 'Amazon Music',
+    custom:    '🔗 Custom Link'
 };
 
-// Platforms available for user to pick — 'shop' is LOCKED and not selectable manually
-const EDITABLE_PLATFORMS = ['youtube', 'tiktok', 'twitch', 'instagram', 'facebook', 'twitter', 'discord', 'spotify', 'email', 'website'];
+const EDITABLE_PLATFORMS = [
+    'youtube', 'tiktok', 'twitch', 'instagram', 'facebook', 'twitter',
+    'threads', 'snapchat', 'linkedin', 'discord', 'kick',
+    'spotify', 'soundcloud', 'applepodcasts', 'amazonmusic',
+    'patreon', 'kofi', 'cameo', 'substack',
+    'email', 'website', 'custom'
+];
 
+// ═══════════════════════════════════════════════════
+//  THEME PRESETS
+// ═══════════════════════════════════════════════════
+const THEME_PRESETS = {
+    sunset:    { name: 'Sunset',    colors: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe'] },
+    ocean:     { name: 'Ocean',     colors: ['#2E3192', '#1BFFFF'] },
+    fire:      { name: 'Fire',      colors: ['#ee0979', '#ff6a00'] },
+    forest:    { name: 'Forest',    colors: ['#134E5E', '#71B280'] },
+    berry:     { name: 'Berry',     colors: ['#8E2DE2', '#4A00E0'] },
+    peach:     { name: 'Peach',     colors: ['#ED4264', '#FFEDBC'] },
+    midnight:  { name: 'Midnight',  colors: ['#0F2027', '#203A43', '#2C5364'] },
+    candy:     { name: 'Candy',     colors: ['#FC466B', '#3F5EFB'] },
+    lime:      { name: 'Lime',      colors: ['#00b09b', '#96c93d'] },
+    aurora:    { name: 'Aurora',    colors: ['#00c6ff', '#0072ff', '#8e2de2'] },
+    coffee:    { name: 'Coffee',    colors: ['#3E5151', '#DECBA4'] },
+    rose:      { name: 'Rose Gold', colors: ['#B06AB3', '#4568DC'] },
+    lava:      { name: 'Lava',      colors: ['#f12711', '#f5af19'] },
+    mint:      { name: 'Mint',      colors: ['#a8ff78', '#78ffd6'] },
+    space:     { name: 'Space',     colors: ['#000428', '#004e92'] }
+};
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
 let currentData = null;
 let fileSHA     = null;
+let avatarSHA   = null;
+let cnameSHA    = null;
 let previewLang = 'en';
 let hasChanges  = false;
-let avatarBase64 = null;
+let avatarBase64Data = null;
+let avatarUploadPending = false;
+let currentColors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe'];
+let featuredIndex = -1;
 
-function b64EncodeUnicode(str) {
-    return btoa(unescape(encodeURIComponent(str)));
-}
-function b64DecodeUnicode(str) {
-    return decodeURIComponent(escape(atob(str)));
+// ═══════════════════════════════════════════════════
+//  UTF-8 BASE64
+// ═══════════════════════════════════════════════════
+function b64EncodeUnicode(str) { return btoa(unescape(encodeURIComponent(str))); }
+function b64DecodeUnicode(str) { return decodeURIComponent(escape(atob(str))); }
+
+// ═══════════════════════════════════════════════════
+//  TAB SWITCHING
+// ═══════════════════════════════════════════════════
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+    
+    if (tab === 'tools') {
+        generateQRCode();
+        updateAnalyticsStatus();
+    }
+    if (tab === 'theme') {
+        renderThemePresets();
+        renderColorPickers();
+    }
 }
 
 // ═══════════════════════════════════════════════════
@@ -1073,13 +1303,13 @@ function renderTokenStatus() {
 }
 
 // ═══════════════════════════════════════════════════
-//  GITHUB API
+//  GITHUB API — LOAD
 // ═══════════════════════════════════════════════════
 async function loadFromGitHub() {
     const token = getToken();
     if (!token) {
-        showStatus('Enter your GitHub token and click Save to get started.', 'info');
-        setPublishStatus('No token — enter one on the left', false);
+        showStatus('Enter your GitHub token and click Save.', 'info');
+        setPublishStatus('No token', false);
         return;
     }
 
@@ -1104,7 +1334,24 @@ async function loadFromGitHub() {
         const decoded = b64DecodeUnicode(json.content.replace(/\n/g, ''));
         currentData = JSON.parse(decoded);
 
+        // Ensure structure defaults
+        if (!currentData.theme) currentData.theme = {};
+        if (!currentData.theme.colors) currentData.theme.colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe'];
+        if (currentData.theme.dark_mode === undefined) currentData.theme.dark_mode = false;
+        if (currentData.theme.music_enabled === undefined) currentData.theme.music_enabled = false;
+        if (!currentData.theme.music_url) currentData.theme.music_url = '';
+        if (currentData.theme.featured_link_index === undefined) currentData.theme.featured_link_index = -1;
+        if (!currentData.analytics) currentData.analytics = { ga_measurement_id: '' };
+        
+        // Migrate old links to have dates
+        currentData.links.forEach(l => {
+            if (l.start_date === undefined) l.start_date = '';
+            if (l.end_date === undefined) l.end_date = '';
+        });
+
         populateEditor(currentData);
+        await loadCname();
+
         hasChanges = false;
         updateUnsavedDot();
         showStatus('✅ Content loaded successfully!', 'success');
@@ -1118,6 +1365,29 @@ async function loadFromGitHub() {
     }
 }
 
+async function loadCname() {
+    const token = getToken();
+    try {
+        const res = await fetch(
+            `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CNAME_PATH}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (res.ok) {
+            const json = await res.json();
+            cnameSHA = json.sha;
+            const domain = atob(json.content.replace(/\n/g, '')).trim();
+            document.getElementById('custom-domain').value = domain;
+        } else {
+            cnameSHA = null;
+        }
+    } catch(e) {
+        cnameSHA = null;
+    }
+}
+
+// ═══════════════════════════════════════════════════
+//  GITHUB API — PUBLISH
+// ═══════════════════════════════════════════════════
 async function publishToGitHub() {
     const token = getToken();
     if (!token) { showStatus('No GitHub token found.', 'error'); return; }
@@ -1132,6 +1402,12 @@ async function publishToGitHub() {
     showStatus('Publishing to GitHub...', 'info');
 
     try {
+        // Upload avatar first if pending
+        if (avatarUploadPending && avatarBase64Data) {
+            showStatus('Uploading avatar image...', 'info');
+            await uploadAvatarToGitHub();
+        }
+
         const res = await fetch(
             `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}`,
             {
@@ -1154,6 +1430,8 @@ async function publishToGitHub() {
         fileSHA = result.content.sha;
         currentData = data;
         hasChanges = false;
+        avatarUploadPending = false;
+        avatarBase64Data = null;
         updateUnsavedDot();
         setPublishing(false);
         showStatus('🚀 Published! Site will update in ~30 seconds.', 'success');
@@ -1166,16 +1444,147 @@ async function publishToGitHub() {
 }
 
 // ═══════════════════════════════════════════════════
+//  AVATAR — GITHUB UPLOAD
+// ═══════════════════════════════════════════════════
+async function uploadAvatarToGitHub() {
+    const token = getToken();
+    if (!token) throw new Error('No token');
+
+    // Extract base64 content (strip "data:image/xxx;base64," prefix)
+    const base64Content = avatarBase64Data.split(',')[1];
+
+    // Get current avatar SHA
+    try {
+        const shaRes = await fetch(
+            `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${AVATAR_PATH}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (shaRes.ok) {
+            const shaJson = await shaRes.json();
+            avatarSHA = shaJson.sha;
+        }
+    } catch(e) { /* no existing avatar */ }
+
+    const body = {
+        message: 'Update avatar via admin panel',
+        content: base64Content
+    };
+    if (avatarSHA) body.sha = avatarSHA;
+
+    const res = await fetch(
+        `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${AVATAR_PATH}`,
+        {
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        }
+    );
+
+    if (!res.ok) {
+        const err = await res.json();
+        throw new Error('Avatar upload failed: ' + (err.message || res.status));
+    }
+
+    const result = await res.json();
+    avatarSHA = result.content.sha;
+}
+
+// ═══════════════════════════════════════════════════
+//  AVATAR — HANDLE UPLOAD
+// ═══════════════════════════════════════════════════
+function handleAvatarUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+        showStatus('❌ Image must be under 5MB.', 'error');
+        return;
+    }
+
+    document.getElementById('upload-progress').textContent = '⏳ Processing image...';
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        // Resize the image to max 400x400 to keep repo small
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const maxSize = 400;
+            let w = img.width, h = img.height;
+            if (w > h) {
+                if (w > maxSize) { h = h * maxSize / w; w = maxSize; }
+            } else {
+                if (h > maxSize) { w = w * maxSize / h; h = maxSize; }
+            }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            avatarBase64Data = canvas.toDataURL('image/png');
+
+            document.getElementById('avatar-preview').src = avatarBase64Data;
+            document.getElementById('nav-avatar').src = avatarBase64Data;
+            document.getElementById('avatar-url').value = '';
+            avatarUploadPending = true;
+            markChanged();
+            livePreview();
+            document.getElementById('upload-progress').textContent = '✅ Ready to upload — click Publish to save';
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function applyAvatarUrl() {
+    const url = document.getElementById('avatar-url').value.trim();
+    if (!url) return;
+    document.getElementById('avatar-preview').src = url;
+    document.getElementById('nav-avatar').src = url;
+    avatarBase64Data = null;
+    avatarUploadPending = false;
+    document.getElementById('upload-progress').textContent = '';
+    livePreview();
+}
+
+function getPreviewAvatarSrc() {
+    if (avatarBase64Data) return avatarBase64Data;
+    const url = document.getElementById('avatar-url').value.trim();
+    if (url) return url;
+    return 'images/avatar.png?t=' + Date.now();
+}
+
+// ═══════════════════════════════════════════════════
 //  EDITOR — POPULATE
 // ═══════════════════════════════════════════════════
 function populateEditor(data) {
     document.getElementById('profile-name').value = data.profile.name || '';
     document.getElementById('bio-en').value = data.profile.bio_en || '';
     document.getElementById('bio-es').value = data.profile.bio_es || '';
+
+    // Theme
+    currentColors = [...data.theme.colors];
+    featuredIndex = data.theme.featured_link_index;
+    document.getElementById('dark-mode-toggle').checked = !!data.theme.dark_mode;
+    document.getElementById('music-toggle').checked = !!data.theme.music_enabled;
+    document.getElementById('music-url').value = data.theme.music_url || '';
+    document.getElementById('music-url-field').style.display = data.theme.music_enabled ? 'block' : 'none';
+
+    // Analytics
+    document.getElementById('ga-id').value = data.analytics.ga_measurement_id || '';
+
     renderLinkCards(data.links);
     updateMerchButtonVisibility();
+    renderThemePresets();
+    renderColorPickers();
+    applyPreviewTheme();
 }
 
+// ═══════════════════════════════════════════════════
+//  LINK CARDS
+// ═══════════════════════════════════════════════════
 function renderLinkCards(links) {
     const container = document.getElementById('links-container');
     container.innerHTML = '';
@@ -1188,7 +1597,8 @@ function renderLinkCards(links) {
 function createLinkCard(link, idx) {
     const div = document.createElement('div');
     const isShop = link.platform === 'shop';
-    div.className = 'link-card' + (isShop ? ' locked' : '');
+    const isFeatured = idx === featuredIndex;
+    div.className = 'link-card' + (isShop ? ' locked' : '') + (isFeatured ? ' featured-card' : '');
     div.dataset.idx = idx;
     div.dataset.platform = link.platform;
     div.draggable = true;
@@ -1196,8 +1606,7 @@ function createLinkCard(link, idx) {
     const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
     const label = PLATFORM_LABELS[link.platform] || link.platform;
 
-    // For shop: no dropdown, just a fixed badge
-    // For others: full dropdown of editable platforms (excluding 'shop')
+    // Platform field
     let platformField;
     if (isShop) {
         platformField = `
@@ -1205,7 +1614,7 @@ function createLinkCard(link, idx) {
                 <label>Platform</label>
                 <input type="text" value="🛍️ Merch Shop (locked)" disabled>
                 <div class="lock-notice">
-                    <i class="fa-solid fa-lock"></i> This is the special merch button — its platform, icon and URL are locked. You can only edit the label or remove it.
+                    <i class="fa-solid fa-lock"></i> Locked — you can only edit the label or remove it.
                 </div>
             </div>
         `;
@@ -1233,9 +1642,14 @@ function createLinkCard(link, idx) {
                 <input type="url" value="${escapeHtml(link.url || '')}" placeholder="https://..." oninput="onCardChange()">
             </div>`;
 
-    const lockedBadgeHTML = isShop
-        ? `<span class="locked-badge"><i class="fa-solid fa-lock"></i> Merch</span>`
-        : '';
+    // Badges
+    const badges = [];
+    if (isShop) badges.push(`<span class="locked-badge"><i class="fa-solid fa-lock"></i> Merch</span>`);
+    if (isFeatured) badges.push(`<span class="featured-badge"><i class="fa-solid fa-star"></i> Featured</span>`);
+    const scheduleBadge = getScheduleBadge(link);
+    if (scheduleBadge) badges.push(scheduleBadge);
+
+    const hasSchedule = link.start_date || link.end_date;
 
     div.innerHTML = `
         <div class="link-card-header">
@@ -1246,8 +1660,11 @@ function createLinkCard(link, idx) {
                 <i class="${icon} pi-${link.platform}"></i>
                 <span>${label}</span>
             </span>
-            ${lockedBadgeHTML}
+            ${badges.join(' ')}
             <div class="link-card-actions">
+                <button class="feature-btn ${isFeatured ? 'active' : ''}" onclick="setFeatured(${idx})" title="Feature this link with pulsing glow">
+                    <i class="fa-solid fa-star"></i>
+                </button>
                 <label class="toggle" title="${link.enabled ? 'Enabled' : 'Disabled'}">
                     <input type="checkbox" ${link.enabled ? 'checked' : ''} onchange="onCardChange()">
                     <span class="toggle-slider"></span>
@@ -1268,10 +1685,54 @@ function createLinkCard(link, idx) {
                 <label>Label — Español</label>
                 <input type="text" value="${escapeHtml(link.label_es || '')}" placeholder="Sígueme en..." oninput="onCardChange()">
             </div>
+            <button class="schedule-toggle-btn" onclick="toggleSchedule(this)">
+                <i class="fa-solid fa-calendar-days"></i> ${hasSchedule ? 'Edit' : 'Add'} Schedule (optional)
+            </button>
+            <div class="schedule-section ${hasSchedule ? 'show' : ''}">
+                <div class="field">
+                    <label><i class="fa-solid fa-play"></i> Start Date</label>
+                    <input type="date" value="${link.start_date || ''}" oninput="onCardChange()">
+                </div>
+                <div class="field">
+                    <label><i class="fa-solid fa-stop"></i> End Date</label>
+                    <input type="date" value="${link.end_date || ''}" oninput="onCardChange()">
+                </div>
+                <div style="grid-column:1/-1; font-size:11px; color:var(--text-muted); text-align:center;">
+                    Leave blank for no limit. Link only shows during this date range.
+                </div>
+            </div>
         </div>
     `;
-
     return div;
+}
+
+function getScheduleBadge(link) {
+    if (!link.start_date && !link.end_date) return null;
+    const now = new Date();
+    if (link.start_date) {
+        const start = new Date(link.start_date + 'T00:00:00');
+        if (now < start) return `<span class="schedule-badge pending"><i class="fa-solid fa-clock"></i> Scheduled</span>`;
+    }
+    if (link.end_date) {
+        const end = new Date(link.end_date + 'T23:59:59');
+        if (now > end) return `<span class="schedule-badge expired"><i class="fa-solid fa-hourglass-end"></i> Expired</span>`;
+    }
+    return `<span class="schedule-badge active"><i class="fa-solid fa-calendar-check"></i> Active</span>`;
+}
+
+function toggleSchedule(btn) {
+    const section = btn.nextElementSibling;
+    section.classList.toggle('show');
+}
+
+function setFeatured(idx) {
+    featuredIndex = (featuredIndex === idx) ? -1 : idx;
+    if (currentData) {
+        currentData.links.forEach((l, i) => {});
+    }
+    renderLinkCards(buildDataFromEditor().links);
+    markChanged();
+    livePreview();
 }
 
 function escapeHtml(str) {
@@ -1283,13 +1744,7 @@ function escapeHtml(str) {
         .replace(/>/g, '&gt;');
 }
 
-// ═══════════════════════════════════════════════════
-//  EVENTS
-// ═══════════════════════════════════════════════════
-function onCardChange() {
-    markChanged();
-    livePreview();
-}
+function onCardChange() { markChanged(); livePreview(); }
 
 function onPlatformChange(select) {
     const card = select.closest('.link-card');
@@ -1303,7 +1758,7 @@ function onPlatformChange(select) {
 
 function addLink() {
     const container = document.getElementById('links-container');
-    const newLink = { enabled: true, platform: 'website', url: '', label_en: '', label_es: '' };
+    const newLink = { enabled: true, platform: 'website', url: '', label_en: '', label_es: '', start_date: '', end_date: '' };
     container.appendChild(createLinkCard(newLink, container.children.length));
     initDragAndDrop();
     markChanged();
@@ -1313,7 +1768,6 @@ function addLink() {
 
 function addMerchLink() {
     const container = document.getElementById('links-container');
-    // Add merch card at the top
     const merchCard = createLinkCard(DEFAULT_MERCH, 0);
     container.insertBefore(merchCard, container.firstChild);
     initDragAndDrop();
@@ -1325,10 +1779,12 @@ function addMerchLink() {
 
 function removeLink(btn) {
     const card = btn.closest('.link-card');
+    const idx = parseInt(card.dataset.idx);
     card.style.transition = 'opacity 0.2s';
     card.style.opacity = '0';
     setTimeout(() => {
         card.remove();
+        if (idx === featuredIndex) featuredIndex = -1;
         markChanged();
         livePreview();
         updateMerchButtonVisibility();
@@ -1347,28 +1803,19 @@ function buildDataFromEditor() {
     const cards = document.querySelectorAll('.link-card');
     const links = [];
 
-    cards.forEach(card => {
+    cards.forEach((card, idx) => {
         const platform = card.dataset.platform;
         const isShop = platform === 'shop';
-
         const toggle = card.querySelector('input[type="checkbox"]');
-        // Grab all inputs including disabled ones (for shop URL)
-        const allInputs = card.querySelectorAll('input[type="text"], input[type="url"]');
+        const bodyInputs = card.querySelectorAll('.link-card-body input[type="text"], .link-card-body input[type="url"]');
+        const dateInputs = card.querySelectorAll('.link-card-body input[type="date"]');
 
         let url, labelEn, labelEs;
-
         if (isShop) {
-            // For shop: [0] is the locked platform text input, [1] is the URL, [2] is label_en, [3] is label_es
-            // But since first is "Merch Shop (locked)", we need to grab correctly
-            // Let me use a more reliable approach — get inputs from body only
-            const bodyInputs = card.querySelectorAll('.link-card-body input[type="text"], .link-card-body input[type="url"]');
-            // bodyInputs: [0]=disabled locked-text, [1]=disabled URL, [2]=label_en, [3]=label_es
             url = bodyInputs[1] ? bodyInputs[1].value.trim() : DEFAULT_MERCH.url;
             labelEn = bodyInputs[2] ? bodyInputs[2].value.trim() : '';
             labelEs = bodyInputs[3] ? bodyInputs[3].value.trim() : '';
         } else {
-            const bodyInputs = card.querySelectorAll('.link-card-body input[type="text"], .link-card-body input[type="url"]');
-            // bodyInputs: [0]=url, [1]=label_en, [2]=label_es
             url = bodyInputs[0] ? bodyInputs[0].value.trim() : '';
             labelEn = bodyInputs[1] ? bodyInputs[1].value.trim() : '';
             labelEs = bodyInputs[2] ? bodyInputs[2].value.trim() : '';
@@ -1379,7 +1826,9 @@ function buildDataFromEditor() {
             platform: platform,
             url: url,
             label_en: labelEn,
-            label_es: labelEs
+            label_es: labelEs,
+            start_date: dateInputs[0] ? dateInputs[0].value : '',
+            end_date: dateInputs[1] ? dateInputs[1].value : ''
         });
     });
 
@@ -1389,42 +1838,108 @@ function buildDataFromEditor() {
             bio_en: document.getElementById('bio-en').value.trim(),
             bio_es: document.getElementById('bio-es').value.trim()
         },
+        theme: {
+            preset: 'custom',
+            colors: currentColors,
+            dark_mode: document.getElementById('dark-mode-toggle').checked,
+            music_enabled: document.getElementById('music-toggle').checked,
+            music_url: document.getElementById('music-url').value.trim(),
+            featured_link_index: featuredIndex
+        },
+        analytics: {
+            ga_measurement_id: document.getElementById('ga-id').value.trim()
+        },
         links
     };
 }
 
 // ═══════════════════════════════════════════════════
-//  AVATAR
+//  THEME
 // ═══════════════════════════════════════════════════
-function handleAvatarUpload(input) {
-    const file = input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        avatarBase64 = e.target.result;
-        document.getElementById('avatar-preview').src = avatarBase64;
-        document.getElementById('nav-avatar').src = avatarBase64;
-        document.getElementById('avatar-url').value = '';
-        livePreview();
-        showStatus('⚠️ Preview only. To permanently change avatar, upload the file to your GitHub repo at images/avatar.png', 'info');
-    };
-    reader.readAsDataURL(file);
+function renderThemePresets() {
+    const container = document.getElementById('theme-presets');
+    container.innerHTML = '';
+    Object.entries(THEME_PRESETS).forEach(([key, preset]) => {
+        const div = document.createElement('div');
+        div.className = 'theme-preset';
+        div.dataset.name = preset.name;
+        div.style.background = buildGradient(preset.colors);
+        if (JSON.stringify(currentColors) === JSON.stringify(preset.colors)) {
+            div.classList.add('active');
+        }
+        div.onclick = () => selectPreset(key);
+        container.appendChild(div);
+    });
 }
 
-function applyAvatarUrl() {
-    const url = document.getElementById('avatar-url').value.trim();
-    if (!url) return;
-    document.getElementById('avatar-preview').src = url;
-    document.getElementById('nav-avatar').src = url;
-    avatarBase64 = null;
+function selectPreset(key) {
+    const preset = THEME_PRESETS[key];
+    currentColors = [...preset.colors];
+    renderThemePresets();
+    renderColorPickers();
+    onThemeChange();
+}
+
+function renderColorPickers() {
+    const container = document.getElementById('color-pickers');
+    container.innerHTML = '';
+    currentColors.forEach((color, idx) => {
+        const div = document.createElement('div');
+        div.className = 'color-picker-item';
+        div.innerHTML = `
+            <input type="color" value="${color}" onchange="updateColor(${idx}, this.value)">
+            ${currentColors.length > 2 ? `<button class="color-picker-remove" onclick="removeColor(${idx})">Remove</button>` : ''}
+        `;
+        container.appendChild(div);
+    });
+    document.getElementById('add-color-btn').style.display = currentColors.length >= 5 ? 'none' : 'inline-flex';
+}
+
+function updateColor(idx, value) {
+    currentColors[idx] = value;
+    renderThemePresets();
+    onThemeChange();
+}
+
+function addColor() {
+    if (currentColors.length >= 5) return;
+    currentColors.push('#ffffff');
+    renderColorPickers();
+    onThemeChange();
+}
+
+function removeColor(idx) {
+    if (currentColors.length <= 2) return;
+    currentColors.splice(idx, 1);
+    renderColorPickers();
+    onThemeChange();
+}
+
+function buildGradient(colors) {
+    const stops = colors.map((c, i) => {
+        const pct = Math.round((i / (colors.length - 1)) * 100);
+        return `${c} ${pct}%`;
+    }).join(', ');
+    return `linear-gradient(135deg, ${stops})`;
+}
+
+function applyPreviewTheme() {
+    const gradient = buildGradient(currentColors);
+    document.getElementById('preview-body').style.background = gradient;
+    document.getElementById('preview-body').style.backgroundSize = '400% 400%';
+    document.getElementById('preview-body').style.animation = 'gradientShift 15s ease infinite';
+}
+
+function onThemeChange() {
+    applyPreviewTheme();
+    markChanged();
     livePreview();
 }
 
-function getPreviewAvatarSrc() {
-    if (avatarBase64) return avatarBase64;
-    const url = document.getElementById('avatar-url').value.trim();
-    if (url) return url;
-    return 'images/avatar.png';
+function onMusicToggle() {
+    const enabled = document.getElementById('music-toggle').checked;
+    document.getElementById('music-url-field').style.display = enabled ? 'block' : 'none';
+    markChanged();
 }
 
 // ═══════════════════════════════════════════════════
@@ -1437,23 +1952,39 @@ function setPreviewLang(lang) {
     livePreview();
 }
 
+function isLinkActiveNow(link) {
+    if (!link.enabled) return false;
+    const now = new Date();
+    if (link.start_date) {
+        const start = new Date(link.start_date + 'T00:00:00');
+        if (now < start) return false;
+    }
+    if (link.end_date) {
+        const end = new Date(link.end_date + 'T23:59:59');
+        if (now > end) return false;
+    }
+    return true;
+}
+
 function livePreview() {
     const data = buildDataFromEditor();
     const lang = previewLang;
     const bioKey = 'bio_' + lang;
     const labelKey = 'label_' + lang;
 
-    const activeLinks = data.links.filter(l => l.enabled && l.url);
+    const activeLinks = data.links.filter(isLinkActiveNow);
 
     const activeLinksSocial = activeLinks.map(link => {
         const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
         return `<a class="preview-social-icon" title="${escapeHtml(link.platform)}"><i class="${icon}"></i></a>`;
     }).join('');
 
-    const activeLinksMain = activeLinks.map(link => {
+    const activeLinksMain = data.links.map((link, origIdx) => {
+        if (!isLinkActiveNow(link)) return '';
         const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
         const label = link[labelKey] || link.label_en || link.platform;
-        return `<div class="preview-link-btn pv-${link.platform}">
+        const isFeat = origIdx === featuredIndex;
+        return `<div class="preview-link-btn pv-${link.platform}${isFeat ? ' pv-featured' : ''}">
                     <i class="${icon}"></i>
                     <span>${escapeHtml(label)}</span>
                 </div>`;
@@ -1476,6 +2007,128 @@ function livePreview() {
 }
 
 // ═══════════════════════════════════════════════════
+//  QR CODE
+// ═══════════════════════════════════════════════════
+let qrInstance = null;
+
+function generateQRCode() {
+    const container = document.getElementById('qr-code');
+    if (!container) return;
+    container.innerHTML = '';
+    qrInstance = new QRCode(container, {
+        text: SITE_URL,
+        width: 220,
+        height: 220,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+    });
+}
+
+function downloadQR(format) {
+    const img = document.querySelector('#qr-code img') || document.querySelector('#qr-code canvas');
+    if (!img) { showStatus('QR code not ready', 'error'); return; }
+    const link = document.createElement('a');
+    link.download = 'willy-mena-qr.png';
+    link.href = img.src || img.toDataURL('image/png');
+    link.click();
+}
+
+function printQR() {
+    const img = document.querySelector('#qr-code img') || document.querySelector('#qr-code canvas');
+    if (!img) return;
+    const src = img.src || img.toDataURL('image/png');
+    const w = window.open('');
+    w.document.write(`
+        <html><head><title>QR Code — ${SITE_URL}</title></head>
+        <body style="text-align:center; padding:40px; font-family:sans-serif;">
+            <h2>Scan to visit</h2>
+            <p style="color:#666">${SITE_URL}</p>
+            <img src="${src}" style="max-width:400px;">
+            <script>setTimeout(()=>window.print(), 300);<\/script>
+        </body></html>
+    `);
+}
+
+// ═══════════════════════════════════════════════════
+//  ANALYTICS STATUS
+// ═══════════════════════════════════════════════════
+function updateAnalyticsStatus() {
+    const id = document.getElementById('ga-id').value.trim();
+    const content = document.getElementById('analytics-status-content');
+    if (!id) {
+        content.innerHTML = `<div style="color:var(--text-muted); font-size:13px;">
+            <i class="fa-solid fa-circle-info"></i> No Analytics ID set — tracking is disabled.
+        </div>`;
+    } else if (!id.startsWith('G-')) {
+        content.innerHTML = `<div style="color:var(--danger); font-size:13px;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Invalid ID format. Should start with "G-"
+        </div>`;
+    } else {
+        content.innerHTML = `<div style="color:var(--success); font-size:13px;">
+            <i class="fa-solid fa-circle-check"></i> Tracking active: <strong>${id}</strong><br>
+            <small style="color:var(--text-muted);">Views and clicks are being tracked on your live site.</small>
+        </div>`;
+    }
+}
+
+// ═══════════════════════════════════════════════════
+//  CUSTOM DOMAIN
+// ═══════════════════════════════════════════════════
+async function saveCustomDomain() {
+    const token = getToken();
+    if (!token) { showStatus('Save your GitHub token first.', 'error'); return; }
+
+    const domain = document.getElementById('custom-domain').value.trim();
+    if (!domain) {
+        // Delete CNAME file
+        if (!cnameSHA) { showStatus('No custom domain to remove.', 'info'); return; }
+        if (!confirm('Remove custom domain?')) return;
+        try {
+            const res = await fetch(
+                `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CNAME_PATH}`,
+                {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: 'Remove custom domain', sha: cnameSHA })
+                }
+            );
+            if (!res.ok) throw new Error(res.status);
+            cnameSHA = null;
+            showStatus('✅ Custom domain removed.', 'success');
+        } catch(e) {
+            showStatus('❌ Failed to remove: ' + e.message, 'error');
+        }
+        return;
+    }
+
+    // Save CNAME file
+    const encoded = btoa(domain + '\n');
+    const body = { message: 'Set custom domain: ' + domain, content: encoded };
+    if (cnameSHA) body.sha = cnameSHA;
+
+    try {
+        const res = await fetch(
+            `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CNAME_PATH}`,
+            {
+                method: 'PUT',
+                headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            }
+        );
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.message || res.status);
+        }
+        const result = await res.json();
+        cnameSHA = result.content.sha;
+        showStatus('✅ Custom domain saved! Now configure DNS and GitHub Pages settings.', 'success');
+    } catch(e) {
+        showStatus('❌ Failed to save: ' + e.message, 'error');
+    }
+}
+
+// ═══════════════════════════════════════════════════
 //  DRAG AND DROP
 // ═══════════════════════════════════════════════════
 let dragSrc = null;
@@ -1490,6 +2143,14 @@ function initDragAndDrop() {
         card.addEventListener('dragend', () => {
             card.classList.remove('dragging');
             document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+            // Recompute featured index based on new order
+            const cards = [...document.querySelectorAll('.link-card')];
+            const featuredCard = document.querySelector('.link-card.featured-card');
+            if (featuredCard) {
+                featuredIndex = cards.indexOf(featuredCard);
+            }
+            // Update data-idx attributes
+            cards.forEach((c, i) => c.dataset.idx = i);
             markChanged();
             livePreview();
         });
@@ -1521,10 +2182,9 @@ function markChanged() {
     hasChanges = true;
     updateUnsavedDot();
     setPublishStatus('You have unsaved changes', true);
+    if (document.getElementById('ga-id')) updateAnalyticsStatus();
 }
-function updateUnsavedDot() {
-    document.getElementById('unsaved-dot').classList.toggle('show', hasChanges);
-}
+function updateUnsavedDot() { document.getElementById('unsaved-dot').classList.toggle('show', hasChanges); }
 function setPublishStatus(text, warning) {
     const el = document.getElementById('publish-status-text');
     el.textContent = text;
@@ -1550,10 +2210,12 @@ function confirmReset() { document.getElementById('reset-modal').classList.add('
 function closeResetModal() { document.getElementById('reset-modal').classList.remove('show'); }
 function resetAndReload() {
     closeResetModal();
-    avatarBase64 = null;
+    avatarBase64Data = null;
+    avatarUploadPending = false;
     document.getElementById('avatar-url').value = '';
     document.getElementById('avatar-preview').src = 'images/avatar.png';
     document.getElementById('nav-avatar').src = 'images/avatar.png';
+    document.getElementById('upload-progress').textContent = '';
     loadFromGitHub();
 }
 
@@ -1563,8 +2225,12 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
     });
 });
 
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
 renderTokenStatus();
 loadFromGitHub();
 </script>
+
 </body>
 </html>

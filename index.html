@@ -7,7 +7,7 @@
     <title>Willy Mena | Content Creator & Streamer</title>
     <meta name="description" content="Follow Willy Mena on YouTube, TikTok, Twitch, Instagram, and Facebook">
     
-    <meta name="theme-color" content="#764ba2">
+    <meta name="theme-color" content="#764ba2" id="theme-color-meta">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <link rel="icon" type="image/png" href="images/avatar.png">
@@ -18,8 +18,18 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
+    <!-- Google Analytics loaded dynamically after we read the ID from content.json -->
+    <script id="ga-script-slot"></script>
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            --card-bg: #fff;
+            --card-text: #1a1a2e;
+            --overlay-alpha: 0.25;
+        }
         
         html, body {
             min-height: 100%;
@@ -27,9 +37,7 @@
             -webkit-font-smoothing: antialiased;
         }
         
-        html {
-            background: #764ba2;
-        }
+        html { background: #764ba2; }
         
         body {
             min-height: 100vh;
@@ -42,11 +50,18 @@
             content: '';
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background: var(--gradient-bg);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
             z-index: -1;
+            transition: background 1s ease;
         }
+        
+        /* ═══ DARK MODE ═══ */
+        body.dark-mode { --card-bg: #1a1a24; --card-text: #f0f0f5; --overlay-alpha: 0.15; }
+        body.dark-mode::before { opacity: 0.85; filter: brightness(0.6); }
+        body.dark-mode .avatar-wrap::before { background: rgba(30,30,40,0.95); }
+        body.dark-mode .avatar { border-color: #22222f; }
         
         @keyframes gradientShift {
             0%   { background-position: 0% 50%; }
@@ -54,9 +69,15 @@
             100% { background-position: 0% 50%; }
         }
         
-        .lang-switcher {
+        /* ═══ TOP CONTROLS (lang + music + dark mode) ═══ */
+        .top-controls {
             position: fixed; top: 20px; right: 20px;
-            display: flex; gap: 4px; z-index: 1000;
+            display: flex; gap: 8px; z-index: 1000;
+            align-items: center;
+        }
+        
+        .lang-switcher {
+            display: flex; gap: 4px;
             background: rgba(255,255,255,0.25);
             padding: 5px; border-radius: 30px;
             backdrop-filter: blur(20px);
@@ -79,6 +100,26 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.15);
         }
         
+        .icon-btn {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.4);
+            transform: scale(1.1);
+        }
+        
         .container {
             max-width: 480px; margin: 0 auto;
             text-align: center; position: relative;
@@ -86,7 +127,7 @@
         
         .avatar-wrap {
             width: 120px; height: 120px;
-            margin: 20px auto 20px; position: relative;
+            margin: 60px auto 20px; position: relative;
         }
         
         .avatar-wrap::before {
@@ -157,13 +198,14 @@
         .link-btn {
             display: flex; align-items: center;
             justify-content: center; gap: 12px;
-            padding: 18px 24px; background: #fff;
-            color: #1a1a2e; text-decoration: none;
+            padding: 18px 24px; background: var(--card-bg);
+            color: var(--card-text); text-decoration: none;
             border-radius: 50px; font-size: 15px;
             font-weight: 600;
             transition: all 0.25s ease;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             border: 2px solid transparent;
+            position: relative;
         }
         
         .link-btn:hover {
@@ -180,6 +222,29 @@
         
         .link-btn i { font-size: 20px; }
         
+        /* ═══ FEATURED PULSING GLOW ═══ */
+        .link-btn.featured {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        .link-btn.featured::after {
+            content: '⭐';
+            position: absolute;
+            top: -8px; right: -8px;
+            background: #ffd700;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px;
+            box-shadow: 0 2px 8px rgba(255,215,0,0.6);
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 4px 20px rgba(255,215,0,0.4), 0 0 0 0 rgba(255,215,0,0.7); }
+            50%      { box-shadow: 0 4px 20px rgba(255,215,0,0.6), 0 0 0 15px rgba(255,215,0,0); }
+        }
+        
+        /* ═══ PLATFORM COLORS ═══ */
         .link-btn.youtube i    { color: #ff0000; }
         .link-btn.tiktok i     { color: #000; }
         .link-btn.twitch i     { color: #9146ff; }
@@ -196,54 +261,54 @@
         .link-btn.email i      { color: #ea4335; }
         .link-btn.website i    { color: #333; }
         .link-btn.shop i       { color: #ff6b35; }
+        .link-btn.linkedin i   { color: #0a66c2; }
+        .link-btn.snapchat i   { color: #fffc00; text-shadow: 0 0 2px #000; }
+        .link-btn.threads i    { color: #000; }
+        .link-btn.kick i       { color: #53fc19; }
+        .link-btn.patreon i    { color: #ff424d; }
+        .link-btn.kofi i       { color: #ff5e5b; }
+        .link-btn.cameo i      { color: #ff008a; }
+        .link-btn.substack i   { color: #ff6719; }
+        .link-btn.applepodcasts i { color: #872ec4; }
+        .link-btn.soundcloud i { color: #ff5500; }
+        .link-btn.amazonmusic i { color: #25d1da; }
+        .link-btn.custom i     { color: #666; }
         
-        .link-btn.youtube:hover {
-            background: #ff0000;
-            box-shadow: 0 12px 30px rgba(255,0,0,0.4);
-        }
-        .link-btn.tiktok:hover {
-            background: linear-gradient(135deg, #ff0050 0%, #000 50%, #00f2ea 100%);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-        }
-        .link-btn.twitch:hover {
-            background: #9146ff;
-            box-shadow: 0 12px 30px rgba(145,70,255,0.45);
-        }
-        .link-btn.instagram:hover {
-            background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
-            box-shadow: 0 12px 30px rgba(220,39,67,0.4);
-        }
-        .link-btn.facebook:hover {
-            background: #1877f2;
-            box-shadow: 0 12px 30px rgba(24,119,242,0.4);
-        }
-        .link-btn.twitter:hover {
-            background: #000;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-        }
-        .link-btn.discord:hover {
-            background: #5865f2;
-            box-shadow: 0 12px 30px rgba(88,101,242,0.4);
-        }
-        .link-btn.spotify:hover {
-            background: #1db954;
-            box-shadow: 0 12px 30px rgba(29,185,84,0.4);
-        }
-        .link-btn.email:hover {
-            background: #ea4335;
-            box-shadow: 0 12px 30px rgba(234,67,53,0.4);
-        }
-        .link-btn.website:hover {
-            background: #333;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-        }
+        /* ═══ HOVER COLORS ═══ */
+        .link-btn.youtube:hover { background: #ff0000; box-shadow: 0 12px 30px rgba(255,0,0,0.4); }
+        .link-btn.tiktok:hover { background: linear-gradient(135deg,#ff0050 0%,#000 50%,#00f2ea 100%); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+        .link-btn.twitch:hover { background: #9146ff; box-shadow: 0 12px 30px rgba(145,70,255,0.45); }
+        .link-btn.instagram:hover { background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); box-shadow: 0 12px 30px rgba(220,39,67,0.4); }
+        .link-btn.facebook:hover { background: #1877f2; box-shadow: 0 12px 30px rgba(24,119,242,0.4); }
+        .link-btn.twitter:hover { background: #000; box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+        .link-btn.discord:hover { background: #5865f2; box-shadow: 0 12px 30px rgba(88,101,242,0.4); }
+        .link-btn.spotify:hover { background: #1db954; box-shadow: 0 12px 30px rgba(29,185,84,0.4); }
+        .link-btn.email:hover { background: #ea4335; box-shadow: 0 12px 30px rgba(234,67,53,0.4); }
+        .link-btn.website:hover { background: #333; box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+        .link-btn.linkedin:hover { background: #0a66c2; box-shadow: 0 12px 30px rgba(10,102,194,0.4); }
+        .link-btn.snapchat:hover { background: #fffc00; color: #000 !important; box-shadow: 0 12px 30px rgba(255,252,0,0.5); }
+        .link-btn.snapchat:hover i { color: #000 !important; text-shadow: none; }
+        .link-btn.threads:hover { background: #000; box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+        .link-btn.kick:hover { background: #53fc19; color: #000 !important; box-shadow: 0 12px 30px rgba(83,252,25,0.4); }
+        .link-btn.kick:hover i { color: #000 !important; }
+        .link-btn.patreon:hover { background: #ff424d; box-shadow: 0 12px 30px rgba(255,66,77,0.4); }
+        .link-btn.kofi:hover { background: #ff5e5b; box-shadow: 0 12px 30px rgba(255,94,91,0.4); }
+        .link-btn.cameo:hover { background: #ff008a; box-shadow: 0 12px 30px rgba(255,0,138,0.4); }
+        .link-btn.substack:hover { background: #ff6719; box-shadow: 0 12px 30px rgba(255,103,25,0.4); }
+        .link-btn.applepodcasts:hover { background: #872ec4; box-shadow: 0 12px 30px rgba(135,46,196,0.4); }
+        .link-btn.soundcloud:hover { background: #ff5500; box-shadow: 0 12px 30px rgba(255,85,0,0.4); }
+        .link-btn.amazonmusic:hover { background: #25d1da; box-shadow: 0 12px 30px rgba(37,209,218,0.4); }
+        .link-btn.custom:hover { background: #666; box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
         
+        /* ═══ SHOP SPECIAL STYLING ═══ */
         .link-btn.shop {
             background: linear-gradient(135deg, #fff 0%, #fff5ef 100%);
             border: 2px solid #ff6b35;
             box-shadow: 0 4px 20px rgba(255,107,53,0.25);
         }
-        
+        body.dark-mode .link-btn.shop {
+            background: linear-gradient(135deg, #22222f 0%, #2e2e3e 100%);
+        }
         .link-btn.shop:hover {
             background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
             box-shadow: 0 12px 30px rgba(255,107,53,0.5);
@@ -258,16 +323,25 @@
         
         @media (max-width: 500px) {
             body { padding: 30px 15px 40px; }
-            .avatar-wrap { width: 100px; height: 100px; }
+            .avatar-wrap { width: 100px; height: 100px; margin-top: 70px; }
             h1 { font-size: 24px; }
+            .top-controls { top: 15px; right: 15px; }
         }
     </style>
 </head>
 
 <body>
-    <div class="lang-switcher">
-        <button class="lang-btn active" onclick="setLang('en')" id="btn-en">EN</button>
-        <button class="lang-btn" onclick="setLang('es')" id="btn-es">ES</button>
+    <div class="top-controls">
+        <button class="icon-btn" id="music-btn" onclick="toggleMusic()" style="display:none;" title="Toggle music">
+            <i class="fa-solid fa-music"></i>
+        </button>
+        <button class="icon-btn" id="darkmode-btn" onclick="toggleDarkMode()" title="Toggle dark mode">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+        <div class="lang-switcher">
+            <button class="lang-btn active" onclick="setLang('en')" id="btn-en">EN</button>
+            <button class="lang-btn" onclick="setLang('es')" id="btn-es">ES</button>
+        </div>
     </div>
 
     <div class="container">
@@ -289,9 +363,14 @@
         </div>
     </div>
 
+    <!-- Hidden audio element for background music -->
+    <audio id="bg-music" loop></audio>
+
     <script>
     let CONTENT = null;
     let CURRENT_LANG = 'en';
+    let MUSIC_PLAYING = false;
+    let DARK_MODE = false;
     
     const PLATFORM_ICONS = {
         youtube:   'fa-brands fa-youtube',
@@ -304,7 +383,19 @@
         spotify:   'fa-brands fa-spotify',
         email:     'fa-solid fa-envelope',
         website:   'fa-solid fa-globe',
-        shop:      'fa-solid fa-bag-shopping'
+        shop:      'fa-solid fa-bag-shopping',
+        linkedin:  'fa-brands fa-linkedin-in',
+        snapchat:  'fa-brands fa-snapchat',
+        threads:   'fa-brands fa-threads',
+        kick:      'fa-solid fa-video',
+        patreon:   'fa-brands fa-patreon',
+        kofi:      'fa-solid fa-mug-hot',
+        cameo:     'fa-solid fa-star',
+        substack:  'fa-solid fa-newspaper',
+        applepodcasts: 'fa-brands fa-podcast',
+        soundcloud: 'fa-brands fa-soundcloud',
+        amazonmusic: 'fa-brands fa-amazon',
+        custom:    'fa-solid fa-link'
     };
     
     const SECTION_HEADERS = {
@@ -317,11 +408,110 @@
             const response = await fetch('content.json?t=' + Date.now());
             CONTENT = await response.json();
             document.title = CONTENT.profile.name + ' | Links';
+            
+            initAnalytics();
+            applyTheme();
             renderPage();
         } catch(e) {
             console.error('Could not load content.json', e);
             document.getElementById('name').textContent = 'Error loading content';
         }
+    }
+    
+    function initAnalytics() {
+        const gaId = CONTENT.analytics && CONTENT.analytics.ga_measurement_id;
+        if (!gaId || gaId === 'G-XXXXXXXXXX' || !gaId.startsWith('G-')) return;
+        
+        // Load GA script
+        const gaScript = document.createElement('script');
+        gaScript.async = true;
+        gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+        document.head.appendChild(gaScript);
+        
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', gaId, { page_title: CONTENT.profile.name + ' Links' });
+    }
+    
+    function trackClick(platform, label) {
+        if (typeof gtag === 'function') {
+            gtag('event', 'link_click', {
+                event_category: 'outbound_link',
+                event_label: `${platform} - ${label}`,
+                platform: platform
+            });
+        }
+    }
+    
+    function applyTheme() {
+        const theme = CONTENT.theme || {};
+        
+        // Apply gradient
+        if (theme.colors && theme.colors.length >= 2) {
+            const gradientStr = buildGradient(theme.colors);
+            document.documentElement.style.setProperty('--gradient-bg', gradientStr);
+            document.getElementById('theme-color-meta').setAttribute('content', theme.colors[1] || theme.colors[0]);
+            document.querySelector('html').style.background = theme.colors[1] || theme.colors[0];
+        }
+        
+        // Dark mode
+        if (theme.dark_mode) {
+            document.body.classList.add('dark-mode');
+            DARK_MODE = true;
+            document.querySelector('#darkmode-btn i').className = 'fa-solid fa-sun';
+        }
+        
+        // Music
+        if (theme.music_enabled && theme.music_url) {
+            const audio = document.getElementById('bg-music');
+            audio.src = theme.music_url;
+            audio.volume = 0.3;
+            document.getElementById('music-btn').style.display = 'flex';
+        }
+    }
+    
+    function buildGradient(colors) {
+        const stops = colors.map((c, i) => {
+            const pct = Math.round((i / (colors.length - 1)) * 100);
+            return `${c} ${pct}%`;
+        }).join(', ');
+        return `linear-gradient(135deg, ${stops})`;
+    }
+    
+    function toggleDarkMode() {
+        DARK_MODE = !DARK_MODE;
+        document.body.classList.toggle('dark-mode', DARK_MODE);
+        document.querySelector('#darkmode-btn i').className = DARK_MODE ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        try { localStorage.setItem('dark_mode', DARK_MODE ? '1' : '0'); } catch(e) {}
+    }
+    
+    function toggleMusic() {
+        const audio = document.getElementById('bg-music');
+        const btn = document.getElementById('music-btn');
+        if (MUSIC_PLAYING) {
+            audio.pause();
+            btn.querySelector('i').className = 'fa-solid fa-music';
+        } else {
+            audio.play().catch(e => console.log('Autoplay blocked:', e));
+            btn.querySelector('i').className = 'fa-solid fa-volume-high';
+        }
+        MUSIC_PLAYING = !MUSIC_PLAYING;
+    }
+    
+    function isLinkActive(link) {
+        if (!link.enabled) return false;
+        const now = new Date();
+        if (link.start_date) {
+            const start = new Date(link.start_date + 'T00:00:00');
+            if (now < start) return false;
+        }
+        if (link.end_date) {
+            const end = new Date(link.end_date + 'T23:59:59');
+            if (now > end) return false;
+        }
+        return true;
     }
     
     function renderPage() {
@@ -334,13 +524,17 @@
         
         document.getElementById('section-header').textContent = SECTION_HEADERS[CURRENT_LANG];
         
+        const activeLinks = CONTENT.links.filter(isLinkActive);
+        const featuredIdx = (CONTENT.theme && CONTENT.theme.featured_link_index !== undefined) ? CONTENT.theme.featured_link_index : -1;
+        
         const socialWrap = document.getElementById('social-icons');
         socialWrap.innerHTML = '';
-        CONTENT.links.filter(l => l.enabled).forEach(link => {
+        activeLinks.forEach(link => {
             const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
             socialWrap.innerHTML += `
                 <a href="${link.url}" target="_blank" rel="noopener" 
-                   class="social-icon" title="${link.platform}">
+                   class="social-icon" title="${link.platform}"
+                   onclick="trackClick('${link.platform}', '${(link.label_en||'').replace(/'/g,"\\'")}')">
                     <i class="${icon}"></i>
                 </a>
             `;
@@ -348,14 +542,17 @@
         
         const linksWrap = document.getElementById('links');
         linksWrap.innerHTML = '';
-        CONTENT.links.filter(l => l.enabled).forEach(link => {
+        CONTENT.links.forEach((link, origIdx) => {
+            if (!isLinkActive(link)) return;
             const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
             const labelKey = 'label_' + CURRENT_LANG;
             const label = link[labelKey] || link.label_en || link.platform;
+            const isFeatured = origIdx === featuredIdx;
             linksWrap.innerHTML += `
-                <a class="link-btn ${link.platform}" 
+                <a class="link-btn ${link.platform}${isFeatured ? ' featured' : ''}" 
                    href="${link.url}" 
-                   target="_blank" rel="noopener">
+                   target="_blank" rel="noopener"
+                   onclick="trackClick('${link.platform}', '${(label).replace(/'/g,"\\'")}')">
                     <i class="${icon}"></i>
                     <span>${label}</span>
                 </a>
@@ -377,9 +574,11 @@
         
         document.documentElement.lang = lang;
         
-        try {
-            localStorage.setItem('preferred_lang', lang);
-        } catch(e) {}
+        try { localStorage.setItem('preferred_lang', lang); } catch(e) {}
+        
+        if (typeof gtag === 'function') {
+            gtag('event', 'language_change', { language: lang });
+        }
         
         renderPage();
     }
@@ -389,9 +588,7 @@
             const saved = localStorage.getItem('preferred_lang');
             if (saved && ['en', 'es'].includes(saved)) {
                 CURRENT_LANG = saved;
-                document.querySelectorAll('.lang-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
+                document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
                 document.getElementById('btn-' + saved).classList.add('active');
                 return;
             }
@@ -400,12 +597,18 @@
         const browserLang = (navigator.language || 'en').toLowerCase();
         if (browserLang.startsWith('es')) {
             CURRENT_LANG = 'es';
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('btn-es').classList.add('active');
         }
     }
+    
+    // Restore dark mode preference
+    try {
+        if (localStorage.getItem('dark_mode') === '1') {
+            document.body.classList.add('dark-mode');
+            DARK_MODE = true;
+        }
+    } catch(e) {}
     
     detectLanguage();
     loadContent();

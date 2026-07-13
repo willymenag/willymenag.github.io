@@ -4,48 +4,71 @@
         "bio_en": "🎙️ Content Creator & Streamer<br>🎬 Vlogs | Unconventional Talks | IRL<br>☕ Passionate about good coffee<br>👇 Join me on the journey!",
         "bio_es": "🎙️ Creador de contenido & Streamer<br>🎬 Vlogs | Charlas Unconventional | IRL<br>☕ Apasionado del buen café<br>👇 ¡Acompáñame en el viaje!"
     },
+    "theme": {
+        "preset": "sunset",
+        "colors": ["#667eea", "#764ba2", "#f093fb", "#4facfe", "#00f2fe"],
+        "dark_mode": false,
+        "music_enabled": false,
+        "music_url": "",
+        "featured_link_index": -1
+    },
+    "analytics": {
+        "ga_measurement_id": "G-XXXXXXXXXX"
+    },
     "links": [
         {
             "enabled": true,
             "platform": "shop",
             "url": "https://willy-mena-shop.fourthwall.com/en-cad",
             "label_en": "🛍️ Shop My Merch",
-            "label_es": "🛍️ Compra Mi Merch"
+            "label_es": "🛍️ Compra Mi Merch",
+            "start_date": "",
+            "end_date": ""
         },
         {
             "enabled": true,
             "platform": "youtube",
             "url": "https://www.youtube.com/@WillyMenag",
             "label_en": "Subscribe on YouTube",
-            "label_es": "Suscríbete en YouTube"
+            "label_es": "Suscríbete en YouTube",
+            "start_date": "",
+            "end_date": ""
         },
         {
             "enabled": true,
             "platform": "tiktok",
             "url": "https://www.tiktok.com/@willymenag",
             "label_en": "Follow on TikTok",
-            "label_es": "Sígueme en TikTok"
+            "label_es": "Sígueme en TikTok",
+            "start_date": "",
+            "end_date": ""
         },
         {
             "enabled": true,
             "platform": "twitch",
             "url": "https://www.twitch.tv/willymenag",
             "label_en": "Watch on Twitch",
-            "label_es": "Míralo en Twitch"
+            "label_es": "Míralo en Twitch",
+            "start_date": "",
+            "end_date": ""
         },
         {
             "enabled": true,
             "platform": "instagram",
             "url": "https://www.instagram.com/willymenag/",
             "label_en": "Follow on Instagram",
-            "label_es": "Sígueme en Instagram"
+            "label_es": "Sígueme en Instagram",
+            "start_date": "",
+            "end_date": ""
         },
         {
             "enabled": true,
             "platform": "facebook",
             "url": "https://www.facebook.com/Willymenag",
             "label_en": "Follow on Facebook",
-            "label_es": "Sígueme en Facebook"
+            "label_es": "Sígueme en Facebook",
+            "start_date": "",
+            "end_date": ""
         }
     ]
 }
