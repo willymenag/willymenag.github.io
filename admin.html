@@ -21,6 +21,7 @@
             --danger: #f75f6f;
             --success: #4ade80;
             --warning: #fbbf24;
+            --shop-color: #ff6b35;
             --text: #f0f0f5;
             --text-muted: #8888aa;
             --radius: 12px;
@@ -103,16 +104,6 @@
             transition: all 0.2s ease;
             font-family: inherit;
             text-decoration: none;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: #fff;
-        }
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(124,111,247,0.4);
         }
 
         .btn-danger {
@@ -219,6 +210,11 @@
             box-shadow: 0 0 0 3px rgba(124,111,247,0.15);
         }
 
+        input:disabled, select:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         textarea {
             resize: vertical;
             min-height: 80px;
@@ -230,12 +226,6 @@
         }
 
         /* ── TOGGLE ── */
-        .toggle-wrap {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .toggle {
             position: relative;
             width: 44px; height: 24px;
@@ -284,6 +274,16 @@
             border-color: var(--accent);
         }
 
+        /* Special locked card (merch/shop) */
+        .link-card.locked {
+            background: linear-gradient(135deg, rgba(255,107,53,0.06) 0%, rgba(255,107,53,0.02) 100%);
+            border-color: rgba(255,107,53,0.35);
+        }
+
+        .link-card.locked:hover {
+            border-color: rgba(255,107,53,0.6);
+        }
+
         .link-card-header {
             display: flex;
             align-items: center;
@@ -313,6 +313,21 @@
             flex-shrink: 0;
         }
 
+        .locked-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            background: rgba(255,107,53,0.15);
+            color: var(--shop-color);
+            border: 1px solid rgba(255,107,53,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .link-card-actions {
             display: flex;
             align-items: center;
@@ -334,17 +349,25 @@
             margin-bottom: 0;
         }
 
-        /* Platform icon colors */
+        .lock-notice {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* Platform icon colors — admin badges */
         .pi-youtube { color: #ff0000; }
         .pi-tiktok { color: #fff; }
         .pi-twitch { color: #9146ff; }
         .pi-instagram { color: #e1306c; }
         .pi-facebook { color: #1877f2; }
-        .pi-twitter { color: #1da1f2; }
+        .pi-twitter { color: #fff; }
         .pi-discord { color: #5865f2; }
         .pi-spotify { color: #1db954; }
         .pi-email { color: #ea4335; }
         .pi-website { color: #aaa; }
+        .pi-shop { color: var(--shop-color); }
 
         /* ── ADD LINK BUTTON ── */
         .add-link-btn {
@@ -371,6 +394,31 @@
             background: rgba(124,111,247,0.05);
         }
 
+        /* Add merch button (if not present) */
+        .add-merch-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,107,53,0.08);
+            border: 2px dashed rgba(255,107,53,0.4);
+            border-radius: var(--radius);
+            color: var(--shop-color);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .add-merch-btn:hover {
+            background: rgba(255,107,53,0.15);
+            border-color: var(--shop-color);
+        }
+
         /* ── AVATAR SECTION ── */
         .avatar-editor {
             display: flex;
@@ -386,9 +434,7 @@
             flex-shrink: 0;
         }
 
-        .avatar-inputs {
-            flex: 1;
-        }
+        .avatar-inputs { flex: 1; }
 
         /* ── STATUS BAR ── */
         .status-bar {
@@ -587,6 +633,7 @@
             gap: 10px;
         }
 
+        /* Base preview button */
         .preview-link-btn {
             display: flex;
             align-items: center;
@@ -600,23 +647,41 @@
             font-size: 13px;
             font-weight: 600;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
         }
 
-        .preview-link-btn i { font-size: 17px; }
-        .preview-link-btn.youtube i { color: #ff0000; }
-        .preview-link-btn.tiktok i { color: #000; }
-        .preview-link-btn.twitch i { color: #9146ff; }
-        .preview-link-btn.instagram i {
+        /* IMPORTANT: reset icon styles so only the intended color applies */
+        .preview-link-btn i {
+            font-size: 17px;
+            background: none;
+            -webkit-background-clip: initial;
+            background-clip: initial;
+            -webkit-text-fill-color: initial;
+        }
+
+        .preview-link-btn.pv-youtube i { color: #ff0000; }
+        .preview-link-btn.pv-tiktok i { color: #000; }
+        .preview-link-btn.pv-twitch i { color: #9146ff; }
+        .preview-link-btn.pv-instagram i {
             background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .preview-link-btn.facebook i { color: #1877f2; }
-        .preview-link-btn.twitter i { color: #1da1f2; }
-        .preview-link-btn.discord i { color: #5865f2; }
-        .preview-link-btn.spotify i { color: #1db954; }
-        .preview-link-btn.email i { color: #ea4335; }
+        .preview-link-btn.pv-facebook i { color: #1877f2; }
+        .preview-link-btn.pv-twitter i { color: #000; }
+        .preview-link-btn.pv-discord i { color: #5865f2; }
+        .preview-link-btn.pv-spotify i { color: #1db954; }
+        .preview-link-btn.pv-email i { color: #ea4335; }
+        .preview-link-btn.pv-website i { color: #333; }
+        .preview-link-btn.pv-shop i { color: var(--shop-color); }
+
+        /* Shop premium styling in preview */
+        .preview-link-btn.pv-shop {
+            background: linear-gradient(135deg, #fff 0%, #fff5ef 100%);
+            border: 2px solid var(--shop-color);
+            box-shadow: 0 4px 20px rgba(255,107,53,0.25);
+        }
 
         .preview-footer {
             margin-top: 30px;
@@ -714,7 +779,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ── DRAG STYLES ── */
         .link-card.dragging {
             opacity: 0.4;
             border: 2px dashed var(--accent);
@@ -725,11 +789,8 @@
             background: rgba(124,111,247,0.08);
         }
 
-        /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
-            .layout {
-                grid-template-columns: 1fr;
-            }
+            .layout { grid-template-columns: 1fr; }
             .preview-panel {
                 position: static;
                 height: auto;
@@ -746,7 +807,6 @@
 </head>
 <body>
 
-<!-- TOP NAV -->
 <nav class="topnav">
     <div class="topnav-left">
         <img src="images/avatar.png" alt="avatar" class="topnav-logo" id="nav-avatar">
@@ -759,19 +819,15 @@
     </div>
 </nav>
 
-<!-- LAYOUT -->
 <div class="layout">
 
-    <!-- ══ EDITOR PANEL ══ -->
     <div class="editor-panel">
 
-        <!-- STATUS -->
         <div class="status-bar" id="status-bar">
             <i class="fa-solid fa-circle-info"></i>
             <span id="status-text"></span>
         </div>
 
-        <!-- GITHUB TOKEN -->
         <div class="token-section">
             <div class="section-title" style="margin-bottom:12px;">
                 <i class="fa-brands fa-github"></i> GitHub Access
@@ -788,13 +844,11 @@
             <div id="token-status-badge"></div>
         </div>
 
-        <!-- PROFILE -->
         <div class="section">
             <div class="section-title">
                 <i class="fa-solid fa-user"></i> Profile
             </div>
 
-            <!-- AVATAR -->
             <div class="field">
                 <label>Profile Picture</label>
                 <div class="avatar-editor">
@@ -824,9 +878,9 @@
 
             <div class="field">
                 <label>Bio — English</label>
-                <textarea id="bio-en" placeholder="Bio in English (you can use <br> for new lines)" oninput="livePreview()"></textarea>
+                <textarea id="bio-en" placeholder="Bio in English" oninput="livePreview()"></textarea>
                 <small style="color:var(--text-muted); font-size:11px; margin-top:4px; display:block;">
-                    Use &lt;br&gt; to add a new line. Example: Line one&lt;br&gt;Line two
+                    Use &lt;br&gt; to add a new line.
                 </small>
             </div>
 
@@ -836,7 +890,6 @@
             </div>
         </div>
 
-        <!-- LINKS -->
         <div class="section">
             <div class="section-title">
                 <i class="fa-solid fa-link"></i> Links
@@ -845,6 +898,10 @@
                 </span>
             </div>
 
+            <button class="add-merch-btn" id="add-merch-btn" onclick="addMerchLink()" style="display:none;">
+                <i class="fa-solid fa-bag-shopping"></i> Add Merch Shop Link Back
+            </button>
+
             <div id="links-container"></div>
 
             <button class="add-link-btn" onclick="addLink()">
@@ -852,7 +909,6 @@
             </button>
         </div>
 
-        <!-- DANGER ZONE -->
         <div class="section" style="border-color: rgba(247,95,111,0.3);">
             <div class="section-title" style="color: var(--danger);">
                 <i class="fa-solid fa-triangle-exclamation"></i> Reset
@@ -866,9 +922,7 @@
         </div>
 
     </div>
-    <!-- end editor-panel -->
 
-    <!-- ══ PREVIEW PANEL ══ -->
     <div class="preview-panel">
         <div class="preview-header">
             <span class="preview-header-title"><i class="fa-solid fa-eye"></i> Live Preview</span>
@@ -879,9 +933,7 @@
         </div>
 
         <div class="preview-body" id="preview-body">
-            <div class="preview-container" id="preview-container">
-                <!-- rendered by JS -->
-            </div>
+            <div class="preview-container" id="preview-container"></div>
         </div>
 
         <div class="publish-footer">
@@ -898,20 +950,16 @@
     </div>
 
 </div>
-<!-- end layout -->
 
-<!-- PUBLISH MODAL -->
 <div class="modal-overlay" id="publish-modal">
     <div class="modal">
         <div class="modal-title">🚀 Publish Changes</div>
         <div class="modal-desc">
             This will update <strong>content.json</strong> on GitHub and your live site will refresh in about 30 seconds.
-            <br><br>
-            Make sure everything looks good in the preview before publishing!
         </div>
         <div class="field">
             <label>Commit Message (optional)</label>
-            <input type="text" id="commit-message" placeholder="Update links and profile" value="Update content via admin panel">
+            <input type="text" id="commit-message" value="Update content via admin panel">
         </div>
         <div class="modal-actions">
             <button class="btn btn-ghost" onclick="closePublishModal()">Cancel</button>
@@ -922,12 +970,11 @@
     </div>
 </div>
 
-<!-- RESET MODAL -->
 <div class="modal-overlay" id="reset-modal">
     <div class="modal">
         <div class="modal-title">⚠️ Discard Changes?</div>
         <div class="modal-desc">
-            All unsaved changes will be lost and the editor will reload the current live content from GitHub.
+            All unsaved changes will be lost.
         </div>
         <div class="modal-actions">
             <button class="btn btn-ghost" onclick="closeResetModal()">Cancel</button>
@@ -947,6 +994,15 @@ const REPO_NAME  = 'willymenag.github.io';
 const CONTENT_PATH = 'content.json';
 const GITHUB_API = 'https://api.github.com';
 
+// The default merch link — used when re-adding it
+const DEFAULT_MERCH = {
+    enabled: true,
+    platform: 'shop',
+    url: 'https://willy-mena-shop.fourthwall.com/en-cad',
+    label_en: '🛍️ Shop My Merch',
+    label_es: '🛍️ Compra Mi Merch'
+};
+
 const PLATFORM_ICONS = {
     youtube:   'fa-brands fa-youtube',
     tiktok:    'fa-brands fa-tiktok',
@@ -957,39 +1013,44 @@ const PLATFORM_ICONS = {
     discord:   'fa-brands fa-discord',
     spotify:   'fa-brands fa-spotify',
     email:     'fa-solid fa-envelope',
-    website:   'fa-solid fa-globe'
+    website:   'fa-solid fa-globe',
+    shop:      'fa-solid fa-bag-shopping'
 };
 
-const PLATFORMS = Object.keys(PLATFORM_ICONS);
+const PLATFORM_LABELS = {
+    youtube:   'YouTube',
+    tiktok:    'TikTok',
+    twitch:    'Twitch',
+    instagram: 'Instagram',
+    facebook:  'Facebook',
+    twitter:   'X (Twitter)',
+    discord:   'Discord',
+    spotify:   'Spotify',
+    email:     'Email',
+    website:   'Website',
+    shop:      '🛍️ Merch Shop'
+};
 
-// ═══════════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════════
+// Platforms available for user to pick — 'shop' is LOCKED and not selectable manually
+const EDITABLE_PLATFORMS = ['youtube', 'tiktok', 'twitch', 'instagram', 'facebook', 'twitter', 'discord', 'spotify', 'email', 'website'];
+
 let currentData = null;
 let fileSHA     = null;
 let previewLang = 'en';
 let hasChanges  = false;
 let avatarBase64 = null;
 
-// ═══════════════════════════════════════════════════
-//  UTF-8 SAFE BASE64 HELPERS
-// ═══════════════════════════════════════════════════
 function b64EncodeUnicode(str) {
-    // Convert a UTF-8 string (with emojis/accents) to base64
     return btoa(unescape(encodeURIComponent(str)));
 }
-
 function b64DecodeUnicode(str) {
-    // Convert base64 back to a UTF-8 string (with emojis/accents preserved)
     return decodeURIComponent(escape(atob(str)));
 }
 
 // ═══════════════════════════════════════════════════
-//  TOKEN MANAGEMENT
+//  TOKEN
 // ═══════════════════════════════════════════════════
-function getToken() {
-    return localStorage.getItem('gh_token') || '';
-}
+function getToken() { return localStorage.getItem('gh_token') || ''; }
 
 function saveToken() {
     const val = document.getElementById('github-token').value.trim();
@@ -1007,7 +1068,7 @@ function renderTokenStatus() {
         document.getElementById('github-token').value = t;
         badge.innerHTML = `<span class="token-status saved"><i class="fa-solid fa-circle-check"></i> Token saved in browser</span>`;
     } else {
-        badge.innerHTML = `<span class="token-status missing"><i class="fa-solid fa-circle-xmark"></i> No token saved — enter one above</span>`;
+        badge.innerHTML = `<span class="token-status missing"><i class="fa-solid fa-circle-xmark"></i> No token saved</span>`;
     }
 }
 
@@ -1032,17 +1093,14 @@ async function loadFromGitHub() {
         );
 
         if (res.status === 401) {
-            showStatus('❌ Token is invalid or expired. Please update it.', 'error');
+            showStatus('❌ Token is invalid or expired.', 'error');
             setPublishStatus('Invalid token', false);
             return;
         }
-
         if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
 
         const json = await res.json();
         fileSHA = json.sha;
-
-        // ✅ UTF-8 SAFE DECODE — preserves emojis and accents
         const decoded = b64DecodeUnicode(json.content.replace(/\n/g, ''));
         currentData = JSON.parse(decoded);
 
@@ -1053,10 +1111,9 @@ async function loadFromGitHub() {
         setPublishStatus('All changes published', false);
         document.getElementById('publish-btn').disabled = false;
         livePreview();
-
     } catch(e) {
         console.error(e);
-        showStatus('❌ Failed to load content: ' + e.message, 'error');
+        showStatus('❌ Failed to load: ' + e.message, 'error');
         setPublishStatus('Load failed', false);
     }
 }
@@ -1065,12 +1122,9 @@ async function publishToGitHub() {
     const token = getToken();
     if (!token) { showStatus('No GitHub token found.', 'error'); return; }
 
-    const commitMsg = document.getElementById('commit-message').value.trim() || 'Update content via admin panel';
-
+    const commitMsg = document.getElementById('commit-message').value.trim() || 'Update content';
     const data = buildDataFromEditor();
     const contentStr = JSON.stringify(data, null, 4);
-
-    // ✅ UTF-8 SAFE ENCODE — preserves emojis and accents
     const encoded = b64EncodeUnicode(contentStr);
 
     closePublishModal();
@@ -1078,12 +1132,6 @@ async function publishToGitHub() {
     showStatus('Publishing to GitHub...', 'info');
 
     try {
-        const body = {
-            message: commitMsg,
-            content: encoded,
-            sha: fileSHA
-        };
-
         const res = await fetch(
             `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}`,
             {
@@ -1093,15 +1141,9 @@ async function publishToGitHub() {
                     Accept: 'application/vnd.github.v3+json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(body)
+                body: JSON.stringify({ message: commitMsg, content: encoded, sha: fileSHA })
             }
         );
-
-        if (res.status === 401) {
-            showStatus('❌ Token invalid or expired.', 'error');
-            setPublishing(false);
-            return;
-        }
 
         if (!res.ok) {
             const err = await res.json();
@@ -1114,9 +1156,8 @@ async function publishToGitHub() {
         hasChanges = false;
         updateUnsavedDot();
         setPublishing(false);
-        showStatus('🚀 Published! Your site will update in ~30 seconds.', 'success');
+        showStatus('🚀 Published! Site will update in ~30 seconds.', 'success');
         setPublishStatus('Published just now ✓', false);
-
     } catch(e) {
         console.error(e);
         showStatus('❌ Publish failed: ' + e.message, 'error');
@@ -1131,8 +1172,8 @@ function populateEditor(data) {
     document.getElementById('profile-name').value = data.profile.name || '';
     document.getElementById('bio-en').value = data.profile.bio_en || '';
     document.getElementById('bio-es').value = data.profile.bio_es || '';
-
     renderLinkCards(data.links);
+    updateMerchButtonVisibility();
 }
 
 function renderLinkCards(links) {
@@ -1146,14 +1187,55 @@ function renderLinkCards(links) {
 
 function createLinkCard(link, idx) {
     const div = document.createElement('div');
-    div.className = 'link-card';
+    const isShop = link.platform === 'shop';
+    div.className = 'link-card' + (isShop ? ' locked' : '');
     div.dataset.idx = idx;
+    div.dataset.platform = link.platform;
     div.draggable = true;
 
     const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
-    const platformOptions = PLATFORMS.map(p =>
-        `<option value="${p}" ${p === link.platform ? 'selected' : ''}>${p.charAt(0).toUpperCase() + p.slice(1)}</option>`
-    ).join('');
+    const label = PLATFORM_LABELS[link.platform] || link.platform;
+
+    // For shop: no dropdown, just a fixed badge
+    // For others: full dropdown of editable platforms (excluding 'shop')
+    let platformField;
+    if (isShop) {
+        platformField = `
+            <div class="field field-full">
+                <label>Platform</label>
+                <input type="text" value="🛍️ Merch Shop (locked)" disabled>
+                <div class="lock-notice">
+                    <i class="fa-solid fa-lock"></i> This is the special merch button — its platform, icon and URL are locked. You can only edit the label or remove it.
+                </div>
+            </div>
+        `;
+    } else {
+        const platformOptions = EDITABLE_PLATFORMS.map(p =>
+            `<option value="${p}" ${p === link.platform ? 'selected' : ''}>${PLATFORM_LABELS[p] || p}</option>`
+        ).join('');
+        platformField = `
+            <div class="field field-full">
+                <label>Platform</label>
+                <select onchange="onPlatformChange(this); onCardChange()">
+                    ${platformOptions}
+                </select>
+            </div>
+        `;
+    }
+
+    const urlField = isShop
+        ? `<div class="field field-full">
+                <label>URL (locked)</label>
+                <input type="url" value="${escapeHtml(link.url)}" disabled>
+            </div>`
+        : `<div class="field field-full">
+                <label>URL</label>
+                <input type="url" value="${escapeHtml(link.url || '')}" placeholder="https://..." oninput="onCardChange()">
+            </div>`;
+
+    const lockedBadgeHTML = isShop
+        ? `<span class="locked-badge"><i class="fa-solid fa-lock"></i> Merch</span>`
+        : '';
 
     div.innerHTML = `
         <div class="link-card-header">
@@ -1162,8 +1244,9 @@ function createLinkCard(link, idx) {
             </span>
             <span class="platform-badge">
                 <i class="${icon} pi-${link.platform}"></i>
-                <span class="platform-label">${link.platform}</span>
+                <span>${label}</span>
             </span>
+            ${lockedBadgeHTML}
             <div class="link-card-actions">
                 <label class="toggle" title="${link.enabled ? 'Enabled' : 'Disabled'}">
                     <input type="checkbox" ${link.enabled ? 'checked' : ''} onchange="onCardChange()">
@@ -1175,16 +1258,8 @@ function createLinkCard(link, idx) {
             </div>
         </div>
         <div class="link-card-body">
-            <div class="field field-full">
-                <label>Platform</label>
-                <select onchange="onPlatformChange(this); onCardChange()">
-                    ${platformOptions}
-                </select>
-            </div>
-            <div class="field field-full">
-                <label>URL</label>
-                <input type="url" value="${link.url || ''}" placeholder="https://..." oninput="onCardChange()">
-            </div>
+            ${platformField}
+            ${urlField}
             <div class="field">
                 <label>Label — English</label>
                 <input type="text" value="${escapeHtml(link.label_en || '')}" placeholder="Follow on..." oninput="onCardChange()">
@@ -1209,7 +1284,7 @@ function escapeHtml(str) {
 }
 
 // ═══════════════════════════════════════════════════
-//  EDITOR — EVENTS
+//  EVENTS
 // ═══════════════════════════════════════════════════
 function onCardChange() {
     markChanged();
@@ -1220,25 +1295,32 @@ function onPlatformChange(select) {
     const card = select.closest('.link-card');
     const platform = select.value;
     const icon = PLATFORM_ICONS[platform] || 'fa-solid fa-link';
+    const label = PLATFORM_LABELS[platform] || platform;
+    card.dataset.platform = platform;
     const badge = card.querySelector('.platform-badge');
-    badge.innerHTML = `<i class="${icon} pi-${platform}"></i><span class="platform-label">${platform}</span>`;
+    badge.innerHTML = `<i class="${icon} pi-${platform}"></i><span>${label}</span>`;
 }
 
 function addLink() {
     const container = document.getElementById('links-container');
-    const newLink = {
-        enabled: true,
-        platform: 'website',
-        url: '',
-        label_en: '',
-        label_es: ''
-    };
-    const idx = container.children.length;
-    container.appendChild(createLinkCard(newLink, idx));
+    const newLink = { enabled: true, platform: 'website', url: '', label_en: '', label_es: '' };
+    container.appendChild(createLinkCard(newLink, container.children.length));
     initDragAndDrop();
     markChanged();
     livePreview();
     container.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function addMerchLink() {
+    const container = document.getElementById('links-container');
+    // Add merch card at the top
+    const merchCard = createLinkCard(DEFAULT_MERCH, 0);
+    container.insertBefore(merchCard, container.firstChild);
+    initDragAndDrop();
+    markChanged();
+    livePreview();
+    updateMerchButtonVisibility();
+    merchCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function removeLink(btn) {
@@ -1249,27 +1331,55 @@ function removeLink(btn) {
         card.remove();
         markChanged();
         livePreview();
+        updateMerchButtonVisibility();
     }, 200);
 }
 
+function updateMerchButtonVisibility() {
+    const hasShop = document.querySelector('.link-card[data-platform="shop"]');
+    document.getElementById('add-merch-btn').style.display = hasShop ? 'none' : 'flex';
+}
+
 // ═══════════════════════════════════════════════════
-//  BUILD DATA FROM EDITOR
+//  BUILD DATA
 // ═══════════════════════════════════════════════════
 function buildDataFromEditor() {
     const cards = document.querySelectorAll('.link-card');
     const links = [];
 
     cards.forEach(card => {
-        const inputs  = card.querySelectorAll('input[type="text"], input[type="url"]');
-        const selects = card.querySelectorAll('select');
-        const toggle  = card.querySelector('input[type="checkbox"]');
+        const platform = card.dataset.platform;
+        const isShop = platform === 'shop';
+
+        const toggle = card.querySelector('input[type="checkbox"]');
+        // Grab all inputs including disabled ones (for shop URL)
+        const allInputs = card.querySelectorAll('input[type="text"], input[type="url"]');
+
+        let url, labelEn, labelEs;
+
+        if (isShop) {
+            // For shop: [0] is the locked platform text input, [1] is the URL, [2] is label_en, [3] is label_es
+            // But since first is "Merch Shop (locked)", we need to grab correctly
+            // Let me use a more reliable approach — get inputs from body only
+            const bodyInputs = card.querySelectorAll('.link-card-body input[type="text"], .link-card-body input[type="url"]');
+            // bodyInputs: [0]=disabled locked-text, [1]=disabled URL, [2]=label_en, [3]=label_es
+            url = bodyInputs[1] ? bodyInputs[1].value.trim() : DEFAULT_MERCH.url;
+            labelEn = bodyInputs[2] ? bodyInputs[2].value.trim() : '';
+            labelEs = bodyInputs[3] ? bodyInputs[3].value.trim() : '';
+        } else {
+            const bodyInputs = card.querySelectorAll('.link-card-body input[type="text"], .link-card-body input[type="url"]');
+            // bodyInputs: [0]=url, [1]=label_en, [2]=label_es
+            url = bodyInputs[0] ? bodyInputs[0].value.trim() : '';
+            labelEn = bodyInputs[1] ? bodyInputs[1].value.trim() : '';
+            labelEs = bodyInputs[2] ? bodyInputs[2].value.trim() : '';
+        }
 
         links.push({
-            enabled:   toggle ? toggle.checked : true,
-            platform:  selects[0] ? selects[0].value : 'website',
-            url:       inputs[0] ? inputs[0].value.trim() : '',
-            label_en:  inputs[1] ? inputs[1].value.trim() : '',
-            label_es:  inputs[2] ? inputs[2].value.trim() : ''
+            enabled: toggle ? toggle.checked : true,
+            platform: platform,
+            url: url,
+            label_en: labelEn,
+            label_es: labelEs
         });
     });
 
@@ -1289,7 +1399,6 @@ function buildDataFromEditor() {
 function handleAvatarUpload(input) {
     const file = input.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = function(e) {
         avatarBase64 = e.target.result;
@@ -1297,7 +1406,7 @@ function handleAvatarUpload(input) {
         document.getElementById('nav-avatar').src = avatarBase64;
         document.getElementById('avatar-url').value = '';
         livePreview();
-        showStatus('⚠️ Avatar upload preview only. To permanently change the avatar, upload the image file to your GitHub repo at images/avatar.png', 'info');
+        showStatus('⚠️ Preview only. To permanently change avatar, upload the file to your GitHub repo at images/avatar.png', 'info');
     };
     reader.readAsDataURL(file);
 }
@@ -1319,7 +1428,7 @@ function getPreviewAvatarSrc() {
 }
 
 // ═══════════════════════════════════════════════════
-//  LIVE PREVIEW
+//  PREVIEW
 // ═══════════════════════════════════════════════════
 function setPreviewLang(lang) {
     previewLang = lang;
@@ -1334,19 +1443,19 @@ function livePreview() {
     const bioKey = 'bio_' + lang;
     const labelKey = 'label_' + lang;
 
-    const activeLinksSocial = data.links.filter(l => l.enabled && l.url).map(link => {
+    const activeLinks = data.links.filter(l => l.enabled && l.url);
+
+    const activeLinksSocial = activeLinks.map(link => {
         const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
-        return `<a class="preview-social-icon" title="${link.platform}">
-                    <i class="${icon}"></i>
-                </a>`;
+        return `<a class="preview-social-icon" title="${escapeHtml(link.platform)}"><i class="${icon}"></i></a>`;
     }).join('');
 
-    const activeLinksMain = data.links.filter(l => l.enabled && l.url).map(link => {
+    const activeLinksMain = activeLinks.map(link => {
         const icon = PLATFORM_ICONS[link.platform] || 'fa-solid fa-link';
         const label = link[labelKey] || link.label_en || link.platform;
-        return `<div class="preview-link-btn ${link.platform}">
+        return `<div class="preview-link-btn pv-${link.platform}">
                     <i class="${icon}"></i>
-                    <span>${label}</span>
+                    <span>${escapeHtml(label)}</span>
                 </div>`;
     }).join('');
 
@@ -1357,17 +1466,17 @@ function livePreview() {
         <div class="preview-avatar-wrap">
             <img class="preview-avatar" src="${avatarSrc}" alt="avatar" onerror="this.src='images/avatar.png'">
         </div>
-        <div class="preview-name">${data.profile.name || 'Your Name'}</div>
+        <div class="preview-name">${escapeHtml(data.profile.name || 'Your Name')}</div>
         <div class="preview-bio">${data.profile[bioKey] || ''}</div>
         <div class="preview-social-icons">${activeLinksSocial}</div>
         <div class="preview-section-header">${lang === 'es' ? '🔗 TODOS MIS ENLACES' : '🔗 ALL MY LINKS'}</div>
         <div class="preview-links">${activeLinksMain}</div>
-        <div class="preview-footer">© ${year} ${data.profile.name || ''}</div>
+        <div class="preview-footer">© ${year} ${escapeHtml(data.profile.name || '')}</div>
     `;
 }
 
 // ═══════════════════════════════════════════════════
-//  DRAG AND DROP (REORDER)
+//  DRAG AND DROP
 // ═══════════════════════════════════════════════════
 let dragSrc = null;
 
@@ -1386,7 +1495,6 @@ function initDragAndDrop() {
         });
         card.addEventListener('dragover', e => {
             e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
             if (card !== dragSrc) {
                 document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
                 card.classList.add('drag-over');
@@ -1399,11 +1507,8 @@ function initDragAndDrop() {
                 const cards = [...container.querySelectorAll('.link-card')];
                 const srcIdx = cards.indexOf(dragSrc);
                 const tgtIdx = cards.indexOf(card);
-                if (srcIdx < tgtIdx) {
-                    container.insertBefore(dragSrc, card.nextSibling);
-                } else {
-                    container.insertBefore(dragSrc, card);
-                }
+                if (srcIdx < tgtIdx) container.insertBefore(dragSrc, card.nextSibling);
+                else container.insertBefore(dragSrc, card);
             }
         });
     });
@@ -1417,61 +1522,32 @@ function markChanged() {
     updateUnsavedDot();
     setPublishStatus('You have unsaved changes', true);
 }
-
 function updateUnsavedDot() {
-    const dot = document.getElementById('unsaved-dot');
-    dot.classList.toggle('show', hasChanges);
+    document.getElementById('unsaved-dot').classList.toggle('show', hasChanges);
 }
-
 function setPublishStatus(text, warning) {
     const el = document.getElementById('publish-status-text');
     el.textContent = text;
     el.style.color = warning ? 'var(--warning)' : 'var(--text-muted)';
 }
-
 function showStatus(msg, type) {
     const bar = document.getElementById('status-bar');
-    const text = document.getElementById('status-text');
-    text.textContent = msg;
+    document.getElementById('status-text').textContent = msg;
     bar.className = 'status-bar show ' + type;
-    if (type === 'success') {
-        setTimeout(() => bar.classList.remove('show'), 5000);
-    }
+    if (type === 'success') setTimeout(() => bar.classList.remove('show'), 5000);
 }
-
 function setPublishing(state) {
-    const btn = document.getElementById('publish-btn');
-    const spinner = document.getElementById('publish-spinner');
-    const icon = document.getElementById('publish-icon');
-    btn.disabled = state;
-    spinner.classList.toggle('show', state);
-    icon.style.display = state ? 'none' : '';
+    document.getElementById('publish-btn').disabled = state;
+    document.getElementById('publish-spinner').classList.toggle('show', state);
+    document.getElementById('publish-icon').style.display = state ? 'none' : '';
 }
-
-// ═══════════════════════════════════════════════════
-//  MODALS
-// ═══════════════════════════════════════════════════
 function openPublishModal() {
-    const token = getToken();
-    if (!token) {
-        showStatus('Please save your GitHub token first.', 'error');
-        return;
-    }
+    if (!getToken()) { showStatus('Save your GitHub token first.', 'error'); return; }
     document.getElementById('publish-modal').classList.add('show');
 }
-
-function closePublishModal() {
-    document.getElementById('publish-modal').classList.remove('show');
-}
-
-function confirmReset() {
-    document.getElementById('reset-modal').classList.add('show');
-}
-
-function closeResetModal() {
-    document.getElementById('reset-modal').classList.remove('show');
-}
-
+function closePublishModal() { document.getElementById('publish-modal').classList.remove('show'); }
+function confirmReset() { document.getElementById('reset-modal').classList.add('show'); }
+function closeResetModal() { document.getElementById('reset-modal').classList.remove('show'); }
 function resetAndReload() {
     closeResetModal();
     avatarBase64 = null;
@@ -1487,9 +1563,6 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
     });
 });
 
-// ═══════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════
 renderTokenStatus();
 loadFromGitHub();
 </script>
